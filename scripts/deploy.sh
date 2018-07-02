@@ -6,7 +6,7 @@ TARGET_BRANCH="gh-pages"
 
 function doCompile {
   # ./compile.sh
-  cp -R packages/patternfly-3/_site/. out/
+  cp -R $TRAVIS_BUILD_DIR/packages/patternfly-3/_site/. out/
 }
 
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
