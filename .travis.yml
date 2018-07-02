@@ -1,0 +1,29 @@
+language: node_js
+sudo: required
+cache: yarn
+env:
+  global:
+  - ENCRYPTION_LABEL: 6c432af47126
+  - COMMIT_AUTHOR_EMAIL: patternfly-build@redhat.com
+  - COMMIT_AUTHOR_USERNAME: patternfly-build
+  - TRIGGER_REPO_SLUG: jschuler/patternfly-org
+  - TRIGGER_REPO_BRANCH: master
+notifications:
+  email: false
+git:
+  depth: 1
+before_install:
+- openssl aes-256-cbc -K $encrypted_6c432af47126_key -iv $encrypted_6c432af47126_iv
+  -in pf_org_rsa.pub.enc -out ~/.ssh/pf_org_rsa.pub -d
+- nvm install 4
+- if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+- npm install -g grunt-cli
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.7.0
+- export PATH=$HOME/.yarn/bin:$PATH
+- yarn bootstrap
+install: true
+script:
+- yarn build
+- yarn build-dev
+after_success:
+- "./scripts/deploy.sh"

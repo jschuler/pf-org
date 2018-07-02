@@ -1,0 +1,26 @@
+{
+  "name": "@patternfly/org-lerna-root",
+  "private": true,
+  "version": "0.0.0",
+  "author": "Red Hat",
+  "scripts": {
+    "lerna": "lerna",
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna run prebuild",
+    "build-dev": "lerna run build-dev",
+    "publish-travis": "lerna run publish-travis"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "lerna": "^2.11.0"
+  },
+  "description": "Documentation, etc. for PatternFly",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patternfly/patternfly-org.git"
+  },
+  "bugs": {
+    "url": "https://github.com/patternfly/patternfly-org/issues"
+  },
+  "homepage": "https://github.com/patternfly/patternfly-org"
+}

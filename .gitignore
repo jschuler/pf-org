@@ -1,0 +1,32 @@
+# Ignore Project files
+*.sublime-workspace
+*.sublime-project
+*.idea
+
+# Ignore vim files
+*.swp
+*.swn
+*.swo
+
+# Ignore local nodejs packages
+node_modules
+
+# Ignore node files
+*.man
+nodevars.bat
+npm
+npm.cmd
+
+# Ignore generated files
+patternfly.spec
+_build
+*.map
+=======
+_site
+public
+.DS_Store
+bower_components
+source/assets/css
+github.io
+
+repos
