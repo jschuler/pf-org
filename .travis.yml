@@ -1,4 +1,6 @@
 language: node_js
+node_js:
+  - "8"
 sudo: required
 cache: yarn
 env:
@@ -20,7 +22,6 @@ notifications:
 git:
   depth: 1
 before_install:
-- nvm install 8.11.3
 - npm install -g grunt-cli gatsby-cli
 - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.7.0
 - export PATH=$HOME/.yarn/bin:$PATH
