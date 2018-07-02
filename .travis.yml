@@ -28,8 +28,8 @@ before_install:
 - yarn bootstrap
 install: true
 script:
+- yarn prebuild
 - yarn build
-- yarn build-dev
 after_success: |
   cd "$TRAVIS_BUILD_DIR"
   # This generates a `web` directory containing the website.

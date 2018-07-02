@@ -4,15 +4,11 @@
   "version": "3.49.0",
   "author": "Red Hat",
   "scripts": {
-    "_prebuild": "node ./scripts/release.js",
     "prebuild": "bundle install",
-    "build": "grunt build:production",
-    "build-dev-node": "node ./scripts/release.js",
+    "build": "grunt build:production --baseurl=/",
     "build-dev": "./node_modules/patternfly-eng-release/scripts/_build.sh -o",
     "dev": "grunt serve",
     "publish": "ghpages",
-    "_publish-travis": "ghpages -t -r 'git@github.com:patternfly/patternfly.github.io.git' -b master _site",
-    "publish-travis": "ghpages -t -r 'git@github.com:jschuler/jschuler.github.io.git' -b master _site",
     "grunt": "grunt",
     "docker:build": "docker build -t patternfly/patternfly-org .",
     "docker:run": "docker run -it -p 9002:9002 -p35731:35731 -v ${PWD}/source:/home/patternfly/patternfly-org/source patternfly/patternfly-org"
