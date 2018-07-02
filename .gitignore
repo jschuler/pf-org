@@ -28,5 +28,6 @@ public
 bower_components
 source/assets/css
 github.io
+lerna-debug.log
 
 repos

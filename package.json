@@ -7,7 +7,7 @@
     "lerna": "lerna",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run prebuild",
-    "build-dev": "lerna run build-dev",
+    "build-dev": "lerna run build",
     "publish-travis": "lerna run publish-travis"
   },
   "license": "Apache-2.0",
