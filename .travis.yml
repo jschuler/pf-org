@@ -8,6 +8,13 @@ env:
   - COMMIT_AUTHOR_USERNAME: patternfly-build
   - TRIGGER_REPO_SLUG: jschuler/pf-org
   - TRIGGER_REPO_BRANCH: master
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: out/
+  github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+  on:
+    branch: master
 notifications:
   email: false
 git:
@@ -23,5 +30,3 @@ install: true
 script:
 - yarn build
 - yarn build-dev
-after_success:
-- "./scripts/deploy.sh"
