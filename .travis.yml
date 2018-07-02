@@ -33,6 +33,6 @@ script:
 after_success: |
   cd "$TRAVIS_BUILD_DIR"
   # This generates a `web` directory containing the website.
-  mkdir -p out/pf4
+  mkdir -p out/4.0
   cp -R $TRAVIS_BUILD_DIR/packages/patternfly-3/_site/. $TRAVIS_BUILD_DIR/out/
-  cp -R $TRAVIS_BUILD_DIR/packages/patternfly-4/public/. $TRAVIS_BUILD_DIR/out/pf4/
+  cp -R $TRAVIS_BUILD_DIR/packages/patternfly-4/public/. $TRAVIS_BUILD_DIR/out/4.0/
