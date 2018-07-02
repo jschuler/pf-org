@@ -6,7 +6,7 @@ TARGET_BRANCH="gh-pages"
 
 function doCompile {
   # ./compile.sh
-  cp -R $TRAVIS_BUILD_DIR/packages/patternfly-3/_site/. out/
+  cp -R $TRAVIS_BUILD_DIR/packages/patternfly-3/_site/. $TRAVIS_BUILD_DIR/out/
 }
 
 # Pull requests and commits to other branches shouldn't try to deploy, just build to verify
@@ -68,7 +68,7 @@ openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ../deploy_key_jschul
 echo "*** git push after openssl"
 chmod 600 ../deploy_key_jschuler
 eval `ssh-agent -s`
-ssh-add deploy_key_jschuler
+ssh-add ../deploy_key_jschuler
 
 # Now that we're all set up, we can push.
 echo "*** git push SSH_REPO: $SSH_REPO"
