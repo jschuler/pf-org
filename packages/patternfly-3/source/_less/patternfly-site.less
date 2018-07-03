@@ -372,7 +372,7 @@ h1, h2, h3 {
 header {
   + .container-fluid {
     padding-bottom: 50px; // Sticky footer
-    padding-top: 72px;
+    padding-top: 121px;
     transition: padding-left .2s cubic-bezier(.35,0,.25,1);
     .has-sidebar & {
       padding-left: ((@grid-gutter-width / 2) + @navbar-toggle-sidebar-width);
@@ -381,8 +381,19 @@ header {
       }
     }
   }
-  .alert {
-    margin-bottom: 0 !important;
+  .v4-tease-container {
+    background: url(../img/grid-sidebar.png) 100% 100% no-repeat #292e33;
+    .v4-tease {
+      display: block;
+      padding: 15px 20px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      &:hover {
+        text-decoration: none;
+        background: rgba(101,109,115,.15);
+      }
+    }
   }
   .navbar.navbar-default {
     background: #040404 !important;
@@ -390,14 +401,14 @@ header {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
-    border-top: 2px solid #32a6d7;
+    // border-top: 2px solid #32a6d7;
     font-size: @font-size-base + 1;
     margin-bottom: 0;
     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false) !important;
     .home & {
       background: transparent !important;
       position: absolute !important;
-      top: 43px !important;
+      top: 0 !important;
     }
     .form-group {
       display: block;
@@ -856,7 +867,7 @@ html {
   margin: 0;
   padding: 0;
   position: fixed;
-  top: 72px;
+  top: 121px;
   transition: all .2s cubic-bezier(.35,0,.25,1);
   width: @navbar-sidebar-width;
   z-index: (@zindex-navbar-fixed - 1);
