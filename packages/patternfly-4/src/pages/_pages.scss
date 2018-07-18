@@ -1,0 +1,13 @@
+.starter-template {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+#sidebar {
+  .nav-link[data-toggle].collapsed:after {
+    content: "▾";
+  }
+  .nav-link[data-toggle]:not(.collapsed):after {
+    content: "▴";
+  }
+}
