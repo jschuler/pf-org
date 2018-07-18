@@ -49,6 +49,7 @@
     "gatsby-remark-autolink-headers": "^1.4.19",
     "gatsby-remark-embed-snippet": "^2.0.2",
     "gatsby-remark-prismjs": "^2.0.4",
+    "gatsby-remark-responsive-iframe": "^1.4.20",
     "gatsby-source-filesystem": "^1.5.16",
     "gatsby-transformer-json": "^1.0.14",
     "gatsby-transformer-remark": "^1.7.44",

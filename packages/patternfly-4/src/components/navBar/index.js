@@ -49,7 +49,7 @@ export default class NavBar extends React.Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/get_started/">Get Started</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/getting-started/">Get Started</Link>
               </NavItem>
               <NavItem>
                 <Link className="nav-link" activeClassName="nav-active" to="/docs/foundations/">Documentation</Link>
@@ -58,7 +58,7 @@ export default class NavBar extends React.Component {
                 <Link className="nav-link" activeClassName="nav-active" to="/demos/">Demos</Link>
               </NavItem>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/contribute/">Contribute</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/contribution/">Contribute</Link>
               </NavItem>
               <NavItem>
                 <Link className="nav-link" activeClassName="nav-active" to="/blog/">Blog</Link>
@@ -68,7 +68,7 @@ export default class NavBar extends React.Component {
                   PatternFly 4
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem href="/">
+                  <DropdownItem href="https://jschuler.github.io/pf-org/">
                     PatternFly 3
                   </DropdownItem>
                 </DropdownMenu>

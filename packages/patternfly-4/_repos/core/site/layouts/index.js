@@ -3,12 +3,12 @@ import Helmet from 'react-helmet';
 import Link from 'gatsby-link';
 import Navigation from '@siteComponents/Navigation';
 import Prisim from 'prismjs'; // eslint-disable-line no-unused-vars
-import NavBar from '../../components/navBar';
+import NavBar from '../../../../src/components/navBar';
 
 import 'prismjs/themes/prism-coy.css';
 import '../../patternfly/patternfly-base.scss';
 import '../workspace.scss';
-import '../../../sass/style.scss';
+import '../../../../sass/style.scss';
 
 export default ({ children, data, location }) => {
   const allPages = data.allSitePage.edges.reduce((accum, edge) => {
@@ -38,7 +38,10 @@ export default ({ children, data, location }) => {
   }, {});
 
   let siding;
-  if (location.pathname.indexOf('/docs/') > -1) {
+  let mainFrame;
+  const pathSearch = ['/docs/', '/components/', '/layouts/', '/demos/'];
+  if (new RegExp(pathSearch.join('|')).test(location.pathname)) {
+    mainFrame = <iframe src="https://pf-next.com/components/" height="500" width="100%"/>;
     siding = (
       <div className="layout__sidebar">
         <div className="layout__sidebar__item">
@@ -79,9 +82,10 @@ export default ({ children, data, location }) => {
         />
       </Helmet>
       <NavBar />
-      <Navigation links={allPages.page} isHorizontal />
+      {/* <Navigation links={allPages.page} isHorizontal /> */}
 
       <main className="layout__main">
+        {/* {mainFrame} */}
         {siding}
         <div className="layout__content">{children()}</div>
       </main>

@@ -17,9 +17,9 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
 
-const COMPONENTS_PATH = path.resolve(__dirname, './src/patternfly/components');
-const DEMOS_PATH = path.resolve(__dirname, './src/patternfly/demos');
-const LAYOUTS_PATH = path.resolve(__dirname, './src/patternfly/layouts');
+const COMPONENTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/components');
+const DEMOS_PATH = path.resolve(__dirname, './_repos/core/patternfly/demos');
+const LAYOUTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/layouts');
 
 const COMPONENT_PATHS = fs
   .readdirSync(COMPONENTS_PATH)
@@ -118,13 +118,13 @@ exports.modifyWebpackConfig = function (_ref, options) {
 
 exports.onCreateNode = ({ node, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
-  const PAGES_BASE_DIR = path.resolve(__dirname, './src/site/pages');
+  const PAGES_BASE_DIR = path.resolve(__dirname, './_repos/core/site/pages');
   const COMPONENTS_BASE_DIR = path.resolve(
     __dirname,
-    './src/patternfly/components'
+    './_repos/core/patternfly/components'
   );
-  const DEMOS_BASE_DIR = path.resolve(__dirname, './src/patternfly/demos');
-  const LAYOUTS_BASE_DIR = path.resolve(__dirname, './src/patternfly/layouts');
+  const DEMOS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/demos');
+  const LAYOUTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/layouts');
   const isMarkdown = node.internal.type === 'MarkdownRemark';
 
   if (isMarkdown) {
@@ -187,7 +187,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
         path: node.fields.path,
         component: path.resolve(
           __dirname,
-          `./src/site/templates/${node.fields.type}.js`
+          `./_repos/core/site/templates/${node.fields.type}.js`
         ),
         layout: 'index',
         context: {
@@ -205,7 +205,7 @@ exports.createLayouts = ({
   store,
   boundActionCreators: { createLayout, deleteLayout }
 }) =>
-  glob(path.resolve(__dirname, 'src/site/layouts/**.js')).then(matches => {
+  glob(path.resolve(__dirname, '_repos/core/site/layouts/**.js')).then(matches => {
     matches.forEach(layoutFilePath => {
       const id = path.parse(layoutFilePath).name;
       deleteLayout(id);

@@ -15,36 +15,42 @@ module.exports = {
     `gatsby-transformer-json`,
     `svgo`,
     {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [`gatsby-remark-responsive-iframe`],
+      },
+    },
+    {
       resolve: `gatsby-plugin-page-creator`,
       options: {
-        path: `${PROJECT_ROOT}/src/patternfly`
+        path: `${PROJECT_ROOT}/_repos/core/patternfly`
       }
     },
     {
       resolve: `gatsby-plugin-page-creator`,
       options: {
-        path: `${PROJECT_ROOT}/src/site/pages`,
+        path: `${PROJECT_ROOT}/_repos/core/site/pages`,
         name: 'pages'
       }
     },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        path: `${PROJECT_ROOT}/src/patternfly`,
+        path: `${PROJECT_ROOT}/_repos/core/patternfly`,
         name: 'patternfly'
       }
     },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        path: `${PROJECT_ROOT}/src/site/pages`,
+        path: `${PROJECT_ROOT}/_repos/core/site/pages`,
         name: 'pages'
       }
     },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        path: `${PROJECT_ROOT}/src/site/_site`,
+        path: `${PROJECT_ROOT}/_repos/core/site/_site`,
         name: 'site-components'
       }
     },
@@ -65,7 +71,7 @@ module.exports = {
     {
       resolve: 'gatsby-remark-embed-snippet',
       options: {
-        directory: `${__dirname}/src/patternfly`
+        directory: `${__dirname}/_repos/core/patternfly`
       }
     },
   ],

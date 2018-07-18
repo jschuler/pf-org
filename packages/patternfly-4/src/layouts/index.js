@@ -23,6 +23,7 @@ export default ({ data, location, children }) => {
   if (location.pathname.indexOf('/docs/') > -1) {
     template = (
       <div>
+        TEST
         <Helmet title={data.site.siteMetadata.title} />
         <NavBar />
 
