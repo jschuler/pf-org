@@ -23,7 +23,7 @@ _build
 _patternfly-4
 *.map
 =======
-_site
+packages/patternfly-3/_site
 public
 .DS_Store
 bower_components

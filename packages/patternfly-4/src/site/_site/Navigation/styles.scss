@@ -1,0 +1,23 @@
+.Navigation {
+  &.is-horizontal > &__items {
+    display: flex;
+  }
+  &.is-horizontal &_link {
+    padding: .5rem;
+  }
+  &__items {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+  &__item {
+    text-transform: capitalize;
+  }
+  &_link {
+    display: block;
+    padding: .5rem 0;
+  }
+  &_not-found-message {
+    padding: .5rem 0;
+  }
+}
