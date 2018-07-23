@@ -9,13 +9,11 @@ import './_pages.scss';
 
 const ContributePage = props =>
   (
-    <React.Fragment>
-      <div className="container-fluid h-100">
-          <div className="row h-100">
-            How to contribute
-          </div>
-      </div>
-    </React.Fragment>
+    <div className="container-fluid h-100">
+        <div className="row h-100">
+          How to contribute
+        </div>
+    </div>
   );
 
 export default ContributePage;

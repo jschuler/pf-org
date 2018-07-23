@@ -9,22 +9,20 @@ import './_pages.scss';
 
 const DocsPage = props =>
   (
-    <React.Fragment>
-      <div className="container-fluid h-100">
-          <div className="row h-100">
-              <div className="col-2 collapse d-md-flex bg-light pt-2 h-100" id="sidebar">
-                <SideNav />
-              </div>
-              <div className="col pt-2">
-                  <h2>
-                    Documentation
-                  </h2>
-                  <h6 className="hidden-sm-down">Shrink page width to see sidebar collapse</h6>
-                  <p>Documentation content here</p>
-              </div>
-          </div>
-      </div>
-    </React.Fragment>
+    <div className="container-fluid h-100">
+        <div className="row h-100">
+            <div className="col-2 collapse d-md-flex bg-light pt-2 h-100" id="sidebar">
+              <SideNav />
+            </div>
+            <div className="col pt-2">
+                <h2>
+                  Documentation
+                </h2>
+                <h6 className="hidden-sm-down">Shrink page width to see sidebar collapse</h6>
+                <p>Documentation content here</p>
+            </div>
+        </div>
+    </div>
   );
   // (<main>
   //   <nav className="pf-c-vertical-nav " aria-label="Some Navigation Region">

@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import NavBar from '../components/navBar';
-import Header from '../components/header';
-import Footer from '../components/footer';
 import SideNav from '../components/sideNav';
 
 import '../../sass/style.scss';
@@ -19,6 +17,30 @@ import '../../sass/style.scss';
 // );
 
 export default ({ data, location, children }) => {
+  const allPages = data.allSitePage.edges.reduce((accum, edge) => {
+    const type = edge.node.context.type || 'page';
+
+    if (!accum[type]) {
+      accum[type] = [];
+    }
+
+    if (edge.node.context.name == null) {
+      let bestGuessName = edge.node.path.match(/\/([A-Za-z0-9_-]+)$/g)[0].substring(1);
+      bestGuessName = bestGuessName.replace(/-/g, ' ');
+
+      if (bestGuessName !== 'docs') {
+        edge.node.context.name = bestGuessName;
+      }
+    }
+
+    accum[type].push({
+      path: edge.node.path,
+      text: edge.node.context.name,
+      className: `is-${type}`
+    });
+    return accum;
+  }, {});
+  
   let template;
   if (location.pathname.indexOf('/docs/') > -1) {
     template = (
@@ -30,7 +52,7 @@ export default ({ data, location, children }) => {
         <div className="container-fluid h-100">
           <div className="row h-100">
             <div className="col-2 collapse d-md-flex bg-light pt-2 h-100" id="sidebar">
-              <SideNav />
+              <SideNav links={allPages} />
             </div>
             <div className="col pt-2">
               {children()}
@@ -78,12 +100,26 @@ export default ({ data, location, children }) => {
 
 // export default TemplateWrapper;
 
-export const query = graphql`
-  query TitleQuery {
+export const indexPageQuery = graphql`
+  query GetSitesQuery {
     site {
       siteMetadata {
         title
       }
     }
+    allSitePage(filter: { path: { regex: "/^((?!(404)).)*$/" } }) {
+      edges {
+        node {
+          path
+          context {
+            type
+            category
+            slug
+            name
+            title
+          }
+        }
+      }
+    }
   }
-`
+`;

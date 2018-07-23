@@ -8,6 +8,7 @@ const plugins = [
   'gatsby-transformer-sharp',
   'gatsby-transformer-json',
   'gatsby-transformer-yaml',
+  `svgo`,
   {
     resolve: `gatsby-plugin-postcss-sass`,
     options: {

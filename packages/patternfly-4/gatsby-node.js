@@ -19,6 +19,14 @@ const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOU
 
 const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
 
+exports.rewritePath = ({ parsedFilePath, metadata }) => {
+  console.log(parsedFilePath);
+  return `asd/${parsedFilePath}`;
+  // if (parsedFilePath.ext === "md") {
+  //   return `/${moment(metadata.createdAt).format('YYYY')}/${parsedFilePath.name}/`
+  // }
+}
+
 exports.onCreateNode = ({ node, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
   const PAGES_BASE_DIR = path.resolve(__dirname, './_repos/core/site/pages');
@@ -105,7 +113,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
   });
 };
 
-exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, deleteLayout } }) =>
+exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, deleteLayout } }) => {
   glob(path.resolve(__dirname, '_repos/core/site/layouts/**.js')).then(matches => {
     matches.forEach(layoutFilePath => {
       const id = path.parse(layoutFilePath).name;
@@ -116,6 +124,17 @@ exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, 
       });
     });
   });
+  glob(path.resolve(__dirname, 'src/layouts/**.js')).then(matches => {
+    matches.forEach(layoutFilePath => {
+      const id = path.parse(layoutFilePath).name;
+      deleteLayout(id);
+      createLayout({
+        id,
+        component: layoutFilePath
+      });
+    });
+  });
+};
 
 exports.onCreatePage = async ({ page, boundActionCreators }) => {
   const { createPage } = boundActionCreators;
