@@ -15,6 +15,13 @@ module.exports = {
     `gatsby-transformer-json`,
     `svgo`,
     {
+      resolve: `gatsby-plugin-postcss-sass`,
+      options: {
+        postCssPlugins: [],
+        precision: 5
+      }
+    },
+    {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [`gatsby-remark-responsive-iframe`],

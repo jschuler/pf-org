@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "develop": "yarn repos && gatsby develop",
-    "build": "yarn repos && gatsby build --prefix-paths",
+    "develop": "gatsby develop",
+    "build": "gatsby build --prefix-paths",
     "repos": "node ./scripts/repos.js",
     "serve": "gatsby serve",
     "start": "node server.js",

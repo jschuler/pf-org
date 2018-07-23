@@ -12,7 +12,6 @@ const cssRequire = require('gatsby-1-config-css-modules');
 const path = require('path');
 const fs = require('fs-extra');
 const inflection = require('inflection');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
@@ -20,111 +19,22 @@ const resolveAliases = require('./build/resolveAliases');
 const COMPONENTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/components');
 const DEMOS_PATH = path.resolve(__dirname, './_repos/core/patternfly/demos');
 const LAYOUTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/layouts');
+const UTILITIES_PATH = path.resolve(__dirname, './_repos/core/patternfly/utilities');
 
-const COMPONENT_PATHS = fs
-  .readdirSync(COMPONENTS_PATH)
-  .map(name => path.resolve(COMPONENTS_PATH, `./${name}`));
-
-const DEMO_PATH = fs
-  .readdirSync(DEMOS_PATH)
-  .map(name => path.resolve(DEMOS_PATH, `./${name}`));
-
-const LAYOUT_PATHS = fs
-  .readdirSync(LAYOUTS_PATH)
-  .map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
+const COMPONENT_PATHS = fs.readdirSync(COMPONENTS_PATH).map(name => path.resolve(COMPONENTS_PATH, `./${name}`));
+const DEMO_PATH = fs.readdirSync(DEMOS_PATH).map(name => path.resolve(DEMOS_PATH, `./${name}`));
+const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
+const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
 
 const cssModulesConfig = cssRequire.cssModulesConfig;
-
-exports.modifyWebpackConfig = function (_ref, options) {
-    var config = _ref.config,
-        stage = _ref.stage;
-
-    var sassFiles = /\.s[ac]ss$/;
-    var sassModulesFiles = /\.module\.s[ac]ss$/;
-    options['sourceMap'] = 'sourceMap';
-    var sassLoader = `sass?${JSON.stringify(options)}`;
-
-    config.loader('markdown-loader', current => {
-      current.test = /\.md$/;
-      current.loader = 'html-loader!markdown-loader';
-      return current;
-    });
-    config.loader('html-loader', current => {
-      current.test = /\.html$/;
-      current.loader = 'html-loader';
-      return current;
-    });
-    config.loader('handlebars-loader', current => {
-      current.test = /\.hbs$/;
-      current.loader = 'handlebars-loader';
-      current.query = {
-        partialDirs: COMPONENT_PATHS.concat(LAYOUT_PATHS).concat(DEMO_PATH)
-      };
-      return current;
-    });
-
-    config.merge({
-      resolve: {
-        alias: resolveAliases
-      }
-    });
-
-    switch (stage) {
-        case `develop`:
-        {
-            config.loader(`sass`, {
-                test: sassFiles,
-                exclude: sassModulesFiles,
-                loaders: [`style`, `css`, 'resolve-url-loader', sassLoader]
-            });
-            return config;
-        }
-        case `build-css`:
-        {
-            config.loader(`sass`, {
-                test: sassFiles,
-                exclude: sassModulesFiles,
-                loader: ExtractTextPlugin.extract([`css?minimize`, 'resolve-url-loader', sassLoader])
-            });
-
-            config.loader(`sassModules`, {
-                test: sassModulesFiles,
-                loader: ExtractTextPlugin.extract(`style`, [cssModulesConfig(stage), 'resolve-url-loader', sassLoader])
-            });
-            return config;
-        }
-        case `develop-html`:
-        case `build-html`:
-        case `build-javascript`:
-        {
-            config.loader(`sass`, {
-                test: sassFiles,
-                exclude: sassModulesFiles,
-                loader: `null`
-            });
-
-            config.loader(`sassModules`, {
-                test: sassModulesFiles,
-                loader: ExtractTextPlugin.extract(`style`, [cssModulesConfig(stage), 'resolve-url-loader', sassLoader])
-            });
-            return config;
-        }
-        default:
-        {
-            return config;
-        }
-    }
-};
 
 exports.onCreateNode = ({ node, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
   const PAGES_BASE_DIR = path.resolve(__dirname, './_repos/core/site/pages');
-  const COMPONENTS_BASE_DIR = path.resolve(
-    __dirname,
-    './_repos/core/patternfly/components'
-  );
+  const COMPONENTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/components');
   const DEMOS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/demos');
   const LAYOUTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/layouts');
+  const UTILITIES_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/utilities');
   const isMarkdown = node.internal.type === 'MarkdownRemark';
 
   if (isMarkdown) {
@@ -132,6 +42,7 @@ exports.onCreateNode = ({ node, boundActionCreators }) => {
     const isComponent = node.fileAbsolutePath.includes(COMPONENTS_BASE_DIR);
     const isLayout = node.fileAbsolutePath.includes(LAYOUTS_BASE_DIR);
     const isDemo = node.fileAbsolutePath.includes(DEMOS_BASE_DIR);
+    const isUtility = node.fileAbsolutePath.includes(UTILITIES_BASE_DIR);
     if (isPage) {
       const relativePath = path.relative(PAGES_BASE_DIR, node.fileAbsolutePath);
       const pagePath = `/${relativePath}`.replace(/\.md$/, '');
@@ -156,6 +67,12 @@ exports.onCreateNode = ({ node, boundActionCreators }) => {
       createNodeField({ node, name: 'path', value: pagePath });
       createNodeField({ node, name: 'type', value: 'documentation' });
       createNodeField({ node, name: 'contentType', value: 'demo' });
+    } else if (isUtility) {
+      const utilityName = path.basename(path.dirname(node.fileAbsolutePath));
+      const pagePath = `/utilities/${utilityName}/docs`;
+      createNodeField({ node, name: 'path', value: pagePath });
+      createNodeField({ node, name: 'type', value: 'documentation' });
+      createNodeField({ node, name: 'contentType', value: 'utility' });
     }
   }
 };
@@ -185,10 +102,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
     return result.data.allMarkdownRemark.edges.forEach(({ node }) => {
       createPage({
         path: node.fields.path,
-        component: path.resolve(
-          __dirname,
-          `./_repos/core/site/templates/${node.fields.type}.js`
-        ),
+        component: path.resolve(__dirname, `./_repos/core/site/templates/${node.fields.type}.js`),
         layout: 'index',
         context: {
           pagePath: node.fields.path,
@@ -200,11 +114,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
   });
 };
 
-exports.createLayouts = ({
-  graphql,
-  store,
-  boundActionCreators: { createLayout, deleteLayout }
-}) =>
+exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, deleteLayout } }) =>
   glob(path.resolve(__dirname, '_repos/core/site/layouts/**.js')).then(matches => {
     matches.forEach(layoutFilePath => {
       const id = path.parse(layoutFilePath).name;
@@ -217,23 +127,9 @@ exports.createLayouts = ({
   });
 
 exports.onCreatePage = async ({ page, boundActionCreators }) => {
-    /*
-    const { createPage, deletePage } = boundActionCreators;
-    return new Promise(resolve => {
-      const oldPage = Object.assign({}, page);
-      // Remove trailing slash unless page is /
-      page.path = _path => (_path === `/` ? _path : _path.replace(/\/$/, ``));
-      if (page.path !== oldPage.path) {
-        // Replace new page with old page
-        deletePage(oldPage);
-        createPage(page);
-      }
-      resolve();
-    });
-    */
   const { createPage } = boundActionCreators;
-  const CATEGORY_PAGE_REGEX = /^\/(components|layouts|demos)\/$/;
-  const CATEGORY_CHILD_PAGE_REGEX = /^\/(components|layouts|demos)\/([A-Za-z0-9_-]+)/;
+  const CATEGORY_PAGE_REGEX = /^\/(components|layouts|demos|utilities)\/$/;
+  const CATEGORY_CHILD_PAGE_REGEX = /^\/(components|layouts|demos|utilities)\/([A-Za-z0-9_-]+)/;
   return new Promise((resolve, reject) => {
     const isCategoryPage = page.path.match(CATEGORY_PAGE_REGEX);
     const isCategoryChildPage = page.path.match(CATEGORY_CHILD_PAGE_REGEX);
@@ -270,4 +166,40 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
 
     resolve();
   });
+};
+
+exports.modifyWebpackConfig = ({ config, stage }) => {
+  config.loader('markdown-loader', current => {
+    current.test = /\.md$/;
+    current.loader = 'html-loader!markdown-loader';
+    return current;
+  });
+  config.loader('html-loader', current => {
+    current.test = /\.html$/;
+    current.loader = 'html-loader';
+    return current;
+  });
+  config.loader('handlebars-loader', current => {
+    current.test = /\.hbs$/;
+    current.loader = 'handlebars-loader';
+    current.query = {
+      partialDirs: COMPONENT_PATHS.concat(LAYOUT_PATHS)
+        .concat(DEMO_PATH)
+        .concat(UTILITIES_PATHS)
+    };
+    return current;
+  });
+
+  config.merge({
+    resolve: {
+      alias: resolveAliases
+    },
+    plugins: [
+      new WebpackNotifierPlugin({
+        title: 'PF-Next',
+        skipFirstNotification: true
+      })
+    ]
+  });
+  return config;
 };
