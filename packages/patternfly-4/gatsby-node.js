@@ -1,17 +1,7 @@
-// exports.modifyWebpackConfig = ({ config, stage }) => {
-//   if (stage === 'build-html') {
-//     config.loader('null', {
-//       test: /patternfly-react/,
-//       loader: 'null-loader'
-//     })
-//   }
-// }
-
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const cssRequire = require('gatsby-1-config-css-modules');
 const path = require('path');
 const fs = require('fs-extra');
 const inflection = require('inflection');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
@@ -22,11 +12,12 @@ const LAYOUTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/layouts')
 const UTILITIES_PATH = path.resolve(__dirname, './_repos/core/patternfly/utilities');
 
 const COMPONENT_PATHS = fs.readdirSync(COMPONENTS_PATH).map(name => path.resolve(COMPONENTS_PATH, `./${name}`));
-const DEMO_PATH = fs.readdirSync(DEMOS_PATH).map(name => path.resolve(DEMOS_PATH, `./${name}`));
-const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
-const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
 
-const cssModulesConfig = cssRequire.cssModulesConfig;
+const DEMO_PATH = fs.readdirSync(DEMOS_PATH).map(name => path.resolve(DEMOS_PATH, `./${name}`));
+
+const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
+
+const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
 
 exports.onCreateNode = ({ node, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
@@ -196,7 +187,7 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     },
     plugins: [
       new WebpackNotifierPlugin({
-        title: 'PF-Next',
+        title: 'PF-4',
         skipFirstNotification: true
       })
     ]
