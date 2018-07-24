@@ -1,5 +1,5 @@
 import React from 'react';
-import { Nav, NavItem, NavLink, Collapse } from 'reactstrap';
+import { Button, Nav, NavItem, NavLink, Collapse } from 'reactstrap';
 import Link from 'gatsby-link';
 import SideNavSubMenu from '../sideNavSubMenu';
 import './_.sideNav.scss';
@@ -54,17 +54,17 @@ class SideNav extends React.Component {
 
     return (
       <Nav vertical className="sidebar">
-        <NavItem>
-          <Link onClick={this.toggle.bind(this, 0)} className="nav-link" activeClassName="nav-active" to="/docs/foundations/">Foundations</Link>
+        <NavItem onClick={this.toggle.bind(this, 0)} className="nav-link" to="/docs/foundations/">
+          <Button color="link">Foundations</Button>
         </NavItem>
-        <NavItem>
-          <Link onClick={this.toggle.bind(this, 1)} className="nav-link" activeClassName="nav-active" to="/docs/layouts/">Layouts</Link>
+        <NavItem onClick={this.toggle.bind(this, 1)} className="nav-link" to="/docs/layouts/">
+          <Button color="link">Layouts</Button>
           <Collapse isOpen={this.state.active === 1} className="sub-menu">
             {layoutItems}
           </Collapse>
         </NavItem>
-        <NavItem>
-          <Link onClick={this.toggle.bind(this, 2)} className="nav-link" activeClassName="nav-active" to="/docs/components/">Components</Link>
+        <NavItem onClick={this.toggle.bind(this, 2)} className="nav-link" to="/docs/components/">
+          <Button color="link">Components</Button>
           <Collapse isOpen={this.state.active === 2} className="sub-menu">
             {componentItems}
           </Collapse>
