@@ -9,6 +9,7 @@ const plugins = [
   'gatsby-transformer-json',
   'gatsby-transformer-yaml',
   `svgo`,
+  'gatsby-plugin-debug-build',
   {
     resolve: `gatsby-plugin-postcss-sass`,
     options: {
