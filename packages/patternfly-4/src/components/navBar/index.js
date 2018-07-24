@@ -12,6 +12,10 @@ import {
   DropdownMenu,
   DropdownItem } from 'reactstrap';
 import Link from 'gatsby-link';
+import { push } from 'gatsby-link';
+import ToggleButton from 'react-toggle-button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee, faSearch } from '@fortawesome/free-solid-svg-icons'
 import './_.main-nav.scss';
 
 export default class NavBar extends React.Component {
@@ -22,7 +26,8 @@ export default class NavBar extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       isOpen: false,
-      active: 0
+      active: 0,
+      toggleValue: false
     };
   }
 
@@ -55,7 +60,7 @@ export default class NavBar extends React.Component {
                 <Link className="nav-link" activeClassName="nav-active" to="/docs/foundations/">Documentation</Link>
               </NavItem>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/demos/">Demos</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/demos/">Prototypes</Link>
               </NavItem>
               <NavItem>
                 <Link className="nav-link" activeClassName="nav-active" to="/contribution/">Contribute</Link>
@@ -63,7 +68,39 @@ export default class NavBar extends React.Component {
               <NavItem>
                 <Link className="nav-link" activeClassName="nav-active" to="/blog/">Blog</Link>
               </NavItem>
-              <UncontrolledDropdown nav inNavbar>
+
+              <FontAwesomeIcon icon={faSearch} size="lg" inverse className="search-icon" />
+              
+              <div className="toggle-container">
+                <ToggleButton
+                  inactiveLabel={<span>HTML</span>}
+                  activeLabel={<span>React</span>}
+                  value={this.state.toggleValue}
+                  onToggle={(value) => {
+                    this.setState({
+                      toggleValue: !value,
+                    });
+                    // console.log(this.props.location);
+                    // this.props.onToggleChange(this.state.toggleValue);
+                    // push('/');
+                  }}
+                  colors={{
+                    inactive: {
+                      base: 'rgb(0,0,255)'
+                    }
+                  }}
+                  containerStyle={{display:'inline-block',width:'90px',height:'30px'}} 
+                  trackStyle={{width:'100px',height:'30px'}} 
+                  thumbStyle={{
+                    width: 30,
+                    height: 30
+                  }}
+                  thumbAnimateRange={[1, 70]} 
+                  activeLabelStyle={{ width:'45px',fontSize:'16px',left:'10px' }} 
+                  inactiveLabelStyle={{ width:'45px',fontSize:'16px',right:'6px',color:'rgb(250,250,250)' }} />
+              </div>
+
+              {/* <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   PatternFly 4
                 </DropdownToggle>
@@ -72,7 +109,7 @@ export default class NavBar extends React.Component {
                     PatternFly 3
                   </DropdownItem>
                 </DropdownMenu>
-              </UncontrolledDropdown>
+              </UncontrolledDropdown> */}
             </Nav>
           </Collapse>
         </Navbar>
@@ -80,3 +117,7 @@ export default class NavBar extends React.Component {
     );
   }
 }
+
+NavBar.defaultProps = {
+  toggleValue: false
+};

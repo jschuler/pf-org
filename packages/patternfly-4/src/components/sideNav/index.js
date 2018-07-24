@@ -9,7 +9,7 @@ class SideNav extends React.Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
-    this.state = { collapse: false, active: 0};
+    this.state = { collapse: false, active: 0, forReact: false};
   }
 
   toggle(id) {
@@ -22,7 +22,7 @@ class SideNav extends React.Component {
     let componentItems;
     let layoutItems;
 
-    if (this.props.links && this.props.links.component) {
+    if (!this.state.forReact && this.props.links && this.props.links.component) {
       componentItems = this.props.links.component.map((navItem) => {
         const { path, text, className } = navItem;
         const isFullPage = path.endsWith('-full/');
@@ -30,14 +30,14 @@ class SideNav extends React.Component {
           return null;
         }
         return (
-          <NavItem>
+          <NavItem key={`navigation-${path}`}>
             <Link className="nav-link" activeClassName="nav-active" to={path}>{text}</Link>
           </NavItem>
         );
       });
     }
 
-    if (this.props.links && this.props.links.layout) {
+    if (!this.state.forReact && this.props.links && this.props.links.layout) {
       layoutItems = this.props.links.layout.map((navItem) => {
         const { path, text, className } = navItem;
         const isFullPage = path.endsWith('-full/');
@@ -45,7 +45,7 @@ class SideNav extends React.Component {
           return null;
         }
         return (
-          <NavItem>
+          <NavItem key={`navigation-${path}`}>
             <Link className="nav-link" activeClassName="nav-active" to={path}>{text}</Link>
           </NavItem>
         );
@@ -64,7 +64,7 @@ class SideNav extends React.Component {
           </Collapse>
         </NavItem>
         <NavItem>
-          <Link onClick={this.toggle.bind(this, 2)} className="nav-link" activeClassName="nav-active" to="/docs/components/button/">Components</Link>
+          <Link onClick={this.toggle.bind(this, 2)} className="nav-link" activeClassName="nav-active" to="/docs/components/">Components</Link>
           <Collapse isOpen={this.state.active === 2} className="sub-menu">
             {componentItems}
           </Collapse>
@@ -73,5 +73,9 @@ class SideNav extends React.Component {
     )
   }
 }
+
+SideNav.defaultProps = {
+  forReact: false
+};
 
 export default SideNav;

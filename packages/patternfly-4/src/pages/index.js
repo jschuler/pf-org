@@ -6,7 +6,11 @@ import './_pages.scss';
 const IndexPage = ({data, props}) =>
   (
     <div className="container-fluid h-100">
-      Main
+      <h1>PatternFly 4</h1>
+      <h3>Build better experiences with repeatable, scalable design.</h3>
+      <p>PatternFly is a design system for enterprise web applications, built and supported by a collaborative community of designers and developers.</p>
+      
+
       {/* <h4>{data.allMarkdownRemark.totalCount} Posts</h4>
       {data.allMarkdownRemark.edges.map(({ node }) => (
         <div key={node.id}>

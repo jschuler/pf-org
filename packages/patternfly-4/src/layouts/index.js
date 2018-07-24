@@ -5,100 +5,101 @@ import NavBar from '../components/navBar';
 import SideNav from '../components/sideNav';
 
 import '../../sass/style.scss';
+import './_.main-layout.scss';
 
-// const TemplateWrapper = ({ children }) => (
-//   <div>
-//     <Helmet
-//       title="Gatsby React Boilerplate"
-//     />
-//     <NavBar />
-//     {children()}
-//   </div>
-// );
+export default class MainTemplate extends React.Component {
 
-export default ({ data, location, children }) => {
-  const allPages = data.allSitePage.edges.reduce((accum, edge) => {
-    const type = edge.node.context.type || 'page';
+  constructor(props) {
+    super(props);
+    this.state = { toggleState: false};
+    this.getToggleData = this.getToggleData.bind(this);
+  }
 
-    if (!accum[type]) {
-      accum[type] = [];
-    }
+  getToggleData(data) {
+    console.log(data);
+    this.setState({
+      toggleState: data
+    });
+  }
 
-    if (edge.node.context.name == null) {
-      let bestGuessName = edge.node.path.match(/\/([A-Za-z0-9_-]+)$/g)[0].substring(1);
-      bestGuessName = bestGuessName.replace(/-/g, ' ');
+// export default ({ data, location, children }) => {
+  render() {
+    const allPages = this.props.data.allSitePage.edges.reduce((accum, edge) => {
+      const type = edge.node.context.type || 'page';
 
-      if (bestGuessName !== 'docs') {
-        edge.node.context.name = bestGuessName;
+      if (!accum[type]) {
+        accum[type] = [];
+      }
+
+      if (edge.node.context.name == null) {
+        let bestGuessName = edge.node.path.match(/\/([A-Za-z0-9_-]+)$/g)[0].substring(1);
+        bestGuessName = bestGuessName.replace(/-/g, ' ');
+
+        if (bestGuessName !== 'docs') {
+          edge.node.context.name = bestGuessName;
+        }
+      }
+
+      accum[type].push({
+        path: edge.node.path,
+        text: edge.node.context.name,
+        className: `is-${type}`
+      });
+      return accum;
+    }, {});
+
+    let template;
+    const allowedLocations = ['/docs/', '/layouts/', '/components/'];
+    let allowed = false;
+    for (let i = 0; i < allowedLocations.length; i++) {
+      if (this.props.location.pathname.indexOf(allowedLocations[i]) > -1) {
+        allowed = true;
+        break;
       }
     }
+    if (allowed) {
+      template = (
+        <div>
+          <Helmet title={this.props.data.site.siteMetadata.title} />
+          <NavBar onToggleChange={this.getToggleData} />
 
-    accum[type].push({
-      path: edge.node.path,
-      text: edge.node.context.name,
-      className: `is-${type}`
-    });
-    return accum;
-  }, {});
-  
-  let template;
-  if (location.pathname.indexOf('/docs/') > -1) {
-    template = (
-      <div>
-        TEST
-        <Helmet title={data.site.siteMetadata.title} />
-        <NavBar />
-
-        <div className="container-fluid h-100">
-          <div className="row h-100">
-            <div className="col-2 collapse d-md-flex bg-light pt-2 h-100" id="sidebar">
-              <SideNav links={allPages} />
-            </div>
-            <div className="col pt-2">
-              {children()}
+          <div className="container-fluid h-100">
+            <div className="row h-100">
+              <div className="col-3" id="sidebar">
+                <SideNav links={allPages} forReact={this.state.toggleState} />
+              </div>
+              <div className="col pt-3">
+                {this.props.children()}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    )
-  } else {
-    template = (
-      <div>
-        <Helmet title={data.site.siteMetadata.title} />
-        <NavBar />
+      )
+    } else if (this.props.location.pathname.indexOf('/demos/') > -1) {
+      template = (
+        <div>
+          <Helmet title={this.props.data.site.siteMetadata.title} />
+          <NavBar />
 
-        {children()}
-      </div>
-    )
+          {this.props.children()}
+        </div>
+      )
+    } else {
+      template = (
+        <div>
+          <Helmet title={this.props.data.site.siteMetadata.title} />
+          <NavBar />
+
+          <div className="main-container">
+            {this.props.children()}
+          </div>
+        </div>
+      )
+    }
+    return template;
   }
-  return template;
+  
 }
-
-/*
-<Header />
-<Footer />
-
-<div className="container-fluid h-100">
-    <div className="row h-100">
-        <div className="col-2 collapse d-md-flex bg-light pt-2 h-100" id="sidebar">
-          <SideNav />
-        </div>
-        <div className="col pt-2">
-            <h2>
-              Documentation
-            </h2>
-            <h6 className="hidden-sm-down">Shrink page width to see sidebar collapse</h6>
-            <p>Documentation content here</p>
-        </div>
-    </div>
-</div>
-*/
-
-// TemplateWrapper.propTypes = {
-//   children: PropTypes.func,
-// };
-
-// export default TemplateWrapper;
 
 export const indexPageQuery = graphql`
   query GetSitesQuery {

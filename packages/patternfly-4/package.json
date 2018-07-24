@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "develop": "gatsby develop",
-    "build": "yarn repos && gatsby build --prefix-paths",
+    "build": "gatsby build --prefix-paths",
     "repos": "node ./scripts/repos.js",
     "serve": "gatsby serve",
     "start": "node server.js",
@@ -17,6 +17,9 @@
   "author": "Prototype Interactive",
   "license": "MIT",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.0-14",
+    "@fortawesome/free-solid-svg-icons": "^5.1.0-11",
+    "@fortawesome/react-fontawesome": "^0.1.0-11",
     "basic-auth": "^2.0.0",
     "compression": "^1.7.1",
     "debug": "^3.1.0",
@@ -24,6 +27,7 @@
     "helmet": "^3.10.0",
     "patternfly": "^3.52.1",
     "patternfly-react": "^2.11.1",
+    "react-toggle-button": "^2.2.0",
     "reactstrap": "^6.3.0",
     "serve-static": "^1.13.1"
   },
