@@ -74,7 +74,21 @@ const plugins = [
   {
     resolve: 'gatsby-remark-embed-snippet',
     options: {
-      directory: `${__dirname}/_repos/core/patternfly`
+      directory: `${PROJECT_ROOT}/_repos/core/patternfly`
+    }
+  },
+  {
+    resolve: `gatsby-source-filesystem`,
+    options: {
+      name: `components`,
+      path: `${PROJECT_ROOT}/_repos/react/components`,
+    }
+  },
+  {
+    resolve: `gatsby-source-filesystem`,
+    options: {
+      name: `layouts`,
+      path: `${PROJECT_ROOT}/_repos/react/layouts`,
     }
   }
 ];
@@ -86,3 +100,28 @@ module.exports = {
   pathPrefix: '/pf-org/4.0',
   plugins
 };
+
+/*
+  {
+    resolve: `gatsby-source-filesystem`,
+    options: {
+      name: `examples`,
+      path: `${PROJECT_ROOT}/_repos/react-docs/components/examples`
+    }
+  },
+  'gatsby-transformer-react-docgen'
+  {
+    resolve: 'gatsby-transformer-remark',
+    options: {
+      plugins: [
+        `gatsby-remark-autolink-headers`,
+        {
+          resolve: `gatsby-remark-prismjs`,
+          options: {
+            classPrefix: 'prism-language-'
+          }
+        }
+      ]
+    }
+  },
+*/

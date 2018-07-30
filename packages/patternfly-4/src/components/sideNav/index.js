@@ -31,7 +31,7 @@ class SideNav extends React.Component {
         }
         return (
           <NavItem key={`navigation-${path}`}>
-            <Link className="nav-link" activeClassName="nav-active" to={path}>{text}</Link>
+            <Link className="nav-link" activeClassName="nav-active" to={`/docs${path}`}>{text}</Link>
           </NavItem>
         );
       });
@@ -46,7 +46,7 @@ class SideNav extends React.Component {
         }
         return (
           <NavItem key={`navigation-${path}`}>
-            <Link className="nav-link" activeClassName="nav-active" to={path}>{text}</Link>
+            <Link className="nav-link" activeClassName="nav-active" to={`/docs${path}`}>{text}</Link>
           </NavItem>
         );
       });

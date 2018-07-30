@@ -1,10 +1,12 @@
 const path = require('path');
 const fs = require('fs-extra');
 const inflection = require('inflection');
+const pascalCase = require('pascal-case');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
+const { createFilePath } = require('gatsby-source-filesystem');
 
 const COMPONENTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/components');
 const DEMOS_PATH = path.resolve(__dirname, './_repos/core/patternfly/demos');
@@ -19,15 +21,10 @@ const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOU
 
 const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
 
-exports.rewritePath = ({ parsedFilePath, metadata }) => {
-  console.log(parsedFilePath);
-  return `asd/${parsedFilePath}`;
-  // if (parsedFilePath.ext === "md") {
-  //   return `/${moment(metadata.createdAt).format('YYYY')}/${parsedFilePath.name}/`
-  // }
-}
+// const reactComponentPathRegEx = /(react-components|react-layouts)\//;
+const reactComponentPathRegEx = /(\/react\/components|\/react\/layouts)\//;
 
-exports.onCreateNode = ({ node, boundActionCreators }) => {
+exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
   const PAGES_BASE_DIR = path.resolve(__dirname, './_repos/core/site/pages');
   const COMPONENTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/components');
@@ -35,8 +32,36 @@ exports.onCreateNode = ({ node, boundActionCreators }) => {
   const LAYOUTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/layouts');
   const UTILITIES_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/utilities');
   const isMarkdown = node.internal.type === 'MarkdownRemark';
+  const isSitePage = node.internal.type === 'SitePage';
 
-  if (isMarkdown) {
+  // console.log(`\nin here cause ${node.path} and ${node.internal.type}`);
+  /*if (isSitePage) {
+    // var output = '';
+    // for (var property in node) {
+    //   output += property + ': ' + node[property]+'; ';
+    // }
+    // console.log(`in here cause ${output}`);
+    if (reactComponentPathRegEx.test(node.componentPath)) {
+      console.log(`\nregex ok: in here cause ${node.path} and ${node.internal.type}`);
+      const pathLabel = node.path
+        .split('/')
+        .filter(Boolean)
+        .pop();
+      // console.log(`creating react component ${pathLabel} for path ${node.path}`);
+      createNodeField({
+        node,
+        name: 'label',
+        value: pascalCase(pathLabel)
+      });
+    }
+  } else */if (isMarkdown) {
+    if (!node.fileAbsolutePath) {
+      var output = '';
+      for (var property in node) {
+        output += property + ': ' + node[property]+';\n';
+      }
+      console.log(`\nno fileAbsolutePath: in here cause ${output}`);
+    }
     const isPage = node.fileAbsolutePath.includes(PAGES_BASE_DIR);
     const isComponent = node.fileAbsolutePath.includes(COMPONENTS_BASE_DIR);
     const isLayout = node.fileAbsolutePath.includes(LAYOUTS_BASE_DIR);
@@ -99,6 +124,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
     }
 
     return result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+      // console.log(`creating page at ${node.fields.path}`);
       createPage({
         path: node.fields.path,
         component: path.resolve(__dirname, `./_repos/core/site/templates/${node.fields.type}.js`),
@@ -157,6 +183,8 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
     } else if (isCategoryChildPage) {
       const pageCategory = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[1];
       const pageSlug = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[2];
+      // console.log(`pageSlug ${pageSlug}`);
+      // console.log(`page path ${page.path}`);
       const pageName = pageSlug.replace('-', ' ');
       const pageTitle = inflection.titleize(pageName);
       page.context.type = inflection.singularize(pageCategory);
@@ -164,6 +192,7 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
       page.context.slug = pageSlug;
       page.context.name = pageName;
       page.context.title = pageTitle;
+      page.path = `/docs${page.path}`;
     }
     createPage(page);
 
@@ -179,6 +208,19 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
 };
 
 exports.modifyWebpackConfig = ({ config, stage }) => {
+  // const oldCSSLoader = config._loaders.css;
+  // const pfStylesTest = /patternfly-next.*(components|layouts).*\.css$/;
+  // config.removeLoader('css');
+  // if (
+  //   oldCSSLoader.config.loaders &&
+  //   oldCSSLoader.config.loaders.includes('postcss')
+  // ) {
+  //   oldCSSLoader.config.loaders.splice(
+  //     oldCSSLoader.config.loaders.indexOf('postcss'),
+  //     1
+  //   );
+  // }
+
   config.loader('markdown-loader', current => {
     current.test = /\.md$/;
     current.loader = 'html-loader!markdown-loader';
@@ -199,6 +241,17 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     };
     return current;
   });
+  // config.loader('pf-styles', {
+  //   test: pfStylesTest,
+  //   loaders: [
+  //     'babel-loader',
+  //     require.resolve('@patternfly/react-styles/loader')
+  //   ]
+  // });
+  // config.loader('css', {
+  //   ...oldCSSLoader.config,
+  //   exclude: pfStylesTest
+  // });
 
   config.merge({
     resolve: {

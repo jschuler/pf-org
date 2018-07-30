@@ -49,7 +49,7 @@ export default class MainTemplate extends React.Component {
     }, {});
 
     let template;
-    const allowedLocations = ['/docs/', '/layouts/', '/components/'];
+    const allowedLocations = ['/docs/'];
     let allowed = false;
     for (let i = 0; i < allowedLocations.length; i++) {
       if (this.props.location.pathname.indexOf(allowedLocations[i]) > -1) {
