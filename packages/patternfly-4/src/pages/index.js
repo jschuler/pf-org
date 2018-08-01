@@ -3,9 +3,12 @@
 import React from 'react';
 import './_pages.scss';
 
+const REACT_VERSION = React.version;
+
 const IndexPage = ({data, props}) =>
   (
     <div className="container-fluid h-100">
+      <div>React version: {REACT_VERSION}</div>
       <h1>PatternFly 4</h1>
       <h3>Build better experiences with repeatable, scalable design.</h3>
       <p>PatternFly is a design system for enterprise web applications, built and supported by a collaborative community of designers and developers.</p>
@@ -22,6 +25,24 @@ const IndexPage = ({data, props}) =>
       ))} */}
     </div>
   );
+
+// export const componentDocsFragment = graphql`
+//   fragment ComponentDocs on ComponentMetadata {
+//     displayName
+//     props {
+//       name
+//       defaultValue {
+//         value
+//       }
+//       type {
+//         value
+//         name
+//         raw
+//       }
+//       required
+//     }
+//   }
+// `;
 
 export default IndexPage;
 

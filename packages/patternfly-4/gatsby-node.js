@@ -7,6 +7,7 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
 const { createFilePath } = require('gatsby-source-filesystem');
+const Webpack = require('webpack');
 
 const COMPONENTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/components');
 const DEMOS_PATH = path.resolve(__dirname, './_repos/core/patternfly/demos');
@@ -21,8 +22,9 @@ const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOU
 
 const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
 
-// const reactComponentPathRegEx = /(react-components|react-layouts)\//;
-const reactComponentPathRegEx = /(\/react\/components|\/react\/layouts)\//;
+// const reactComponentPathRegEx = /(components|layouts)\//;
+const reactComponentPathRegEx = /(\/react-docs\/pages\/components|\/react-docs\/pages\/layouts)\//;
+const coreComponentPathRegEx = /(\/core\/patternfly\/components|\/core\/patternfly\/layouts)\//;
 
 exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
@@ -35,14 +37,14 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
   const isSitePage = node.internal.type === 'SitePage';
 
   // console.log(`\nin here cause ${node.path} and ${node.internal.type}`);
-  /*if (isSitePage) {
-    // var output = '';
+  if (isSitePage) {
+    // var output = '\n';
     // for (var property in node) {
     //   output += property + ': ' + node[property]+'; ';
     // }
-    // console.log(`in here cause ${output}`);
+    // console.log(`\n\nin here cause ${output}`);
     if (reactComponentPathRegEx.test(node.componentPath)) {
-      console.log(`\nregex ok: in here cause ${node.path} and ${node.internal.type}`);
+      console.log(`\n\nregex ok: ${node.path} and ${node.internal.type}`);
       const pathLabel = node.path
         .split('/')
         .filter(Boolean)
@@ -53,14 +55,37 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
         name: 'label',
         value: pascalCase(pathLabel)
       });
+      createNodeField({
+        node,
+        name: 'system',
+        value: 'react'
+      });
+    } else if (coreComponentPathRegEx.test(node.componentPath)) {
+      createNodeField({
+        node,
+        name: 'system',
+        value: 'core'
+      });
+    } else {
+      createNodeField({
+        node,
+        name: 'system',
+        value: 'something_else'
+      });
     }
-  } else */if (isMarkdown) {
+
+  } else if (isMarkdown) {
     if (!node.fileAbsolutePath) {
       var output = '';
+      // console.log(`\nin here cause ${node.path} and ${node.internal.type}`);
       for (var property in node) {
         output += property + ': ' + node[property]+';\n';
       }
-      console.log(`\nno fileAbsolutePath: in here cause ${output}`);
+      // console.log(`\nno fileAbsolutePath: in here cause ${output}`);
+      return;
+    }
+    if (node.fileAbsolutePath.includes('react')) {
+      console.log(`REACT COMPONENT`);
     }
     const isPage = node.fileAbsolutePath.includes(PAGES_BASE_DIR);
     const isComponent = node.fileAbsolutePath.includes(COMPONENTS_BASE_DIR);
@@ -74,6 +99,7 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
       createNodeField({ node, name: 'type', value: 'page' });
       createNodeField({ node, name: 'contentType', value: 'page' });
     } else if (isComponent) {
+      // console.log(`component path: ${node.fileAbsolutePath}`);
       const componentName = path.basename(path.dirname(node.fileAbsolutePath));
       const pagePath = `/components/${componentName}/docs`;
       createNodeField({ node, name: 'path', value: pagePath });
@@ -124,11 +150,20 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
     }
 
     return result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+      if (!node.fields) {
+        var output = '';
+        for (var property in node) {
+          output += property + ': ' + node[property]+';\n';
+        }
+        // console.log(`\nAGAIN : in here cause ${output}`);
+        return;
+      }
+
       // console.log(`creating page at ${node.fields.path}`);
       createPage({
         path: node.fields.path,
         component: path.resolve(__dirname, `./_repos/core/site/templates/${node.fields.type}.js`),
-        layout: 'index',
+        layout: 'main',
         context: {
           pagePath: node.fields.path,
           type: node.fields.type,
@@ -140,6 +175,16 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
 };
 
 exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, deleteLayout } }) => {
+  // glob(path.resolve(__dirname, '_repos/react-docs/layouts/**.js')).then(matches => {
+  //   matches.forEach(layoutFilePath => {
+  //     const id = path.parse(layoutFilePath).name;
+  //     deleteLayout(id);
+  //     createLayout({
+  //       id,
+  //       component: layoutFilePath
+  //     });
+  //   });
+  // });
   glob(path.resolve(__dirname, '_repos/core/site/layouts/**.js')).then(matches => {
     matches.forEach(layoutFilePath => {
       const id = path.parse(layoutFilePath).name;
@@ -175,7 +220,7 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
     page.context.slug = '';
     page.context.name = '';
     page.context.title = '';
-    page.layout = 'index';
+    page.layout = 'main';
 
     if (isCategoryPage) {
       page.context.type = 'category';
@@ -192,7 +237,8 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
       page.context.slug = pageSlug;
       page.context.name = pageName;
       page.context.title = pageTitle;
-      page.path = `/docs${page.path}`;
+      // page.path = `/docs${page.path}`;
+      page.path = `${page.path}`;
     }
     createPage(page);
 
@@ -208,18 +254,30 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
 };
 
 exports.modifyWebpackConfig = ({ config, stage }) => {
-  // const oldCSSLoader = config._loaders.css;
-  // const pfStylesTest = /patternfly-next.*(components|layouts).*\.css$/;
-  // config.removeLoader('css');
-  // if (
-  //   oldCSSLoader.config.loaders &&
-  //   oldCSSLoader.config.loaders.includes('postcss')
-  // ) {
-  //   oldCSSLoader.config.loaders.splice(
-  //     oldCSSLoader.config.loaders.indexOf('postcss'),
-  //     1
-  //   );
-  // }
+  const oldCSSLoader = config._loaders.css;
+  const pfStylesTest = /patternfly-next.*(components|layouts).*\.*css$/;
+  config.removeLoader('css');
+  if (
+    oldCSSLoader.config.loaders &&
+    oldCSSLoader.config.loaders.includes('postcss')
+  ) {
+    oldCSSLoader.config.loaders.splice(
+      oldCSSLoader.config.loaders.indexOf('postcss'),
+      1
+    );
+  }
+  config
+    .loader('pf-styles', {
+      test: pfStylesTest,
+      loaders: [
+        'babel-loader',
+        require.resolve('@patternfly/react-styles/loader')
+      ]
+    })
+    .loader('css', {
+      ...oldCSSLoader.config,
+      exclude: pfStylesTest
+    });
 
   config.loader('markdown-loader', current => {
     current.test = /\.md$/;
@@ -241,17 +299,6 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     };
     return current;
   });
-  // config.loader('pf-styles', {
-  //   test: pfStylesTest,
-  //   loaders: [
-  //     'babel-loader',
-  //     require.resolve('@patternfly/react-styles/loader')
-  //   ]
-  // });
-  // config.loader('css', {
-  //   ...oldCSSLoader.config,
-  //   exclude: pfStylesTest
-  // });
 
   config.merge({
     resolve: {
@@ -261,7 +308,37 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
       new WebpackNotifierPlugin({
         title: 'PF-4',
         skipFirstNotification: true
-      })
+      }),
+      new Webpack.NormalModuleReplacementPlugin(
+        /^inactive-@patternfly\/patternfly-next/,
+        function(resource) {
+          console.log(`\nrequesting ${resource.request}`);
+          var resolvedPath;
+          var redirectedPath;
+          // should be:
+          // /Users/jschuler/Documents/GitHub/pf-org/packages/patternfly-4/_repos/react/components/Alert
+          // but is:
+          // /Users/jschuler/Documents/GitHub/pf-org/packages/patternfly-4/_repos/core/patternfly/layouts/Grid/styles.css
+          // /Users/jschuler/Documents/GitHub/pf-org/packages/patternfly-4/_repos/core/patternfly/layouts/Grid/styles.scss
+          if (resource.request.indexOf('components') > -1) {
+            resolvedPath = path.resolve(__dirname, './_repos/core/patternfly/components');
+            redirectedPath = resource.request.replace(/^@patternfly\/patternfly-next\/components/, resolvedPath);
+            redirectedPath = redirectedPath.replace(/\.css$/, '.scss');
+            // console.log(`now requesting ${redirectedPath}`);
+          } else {
+            resolvedPath = path.resolve(__dirname, './_repos/core/patternfly/layouts');
+            redirectedPath = resource.request.replace(/^@patternfly\/patternfly-next\/layouts/, resolvedPath);
+            redirectedPath = redirectedPath.replace(/\.css$/, '.scss');
+            // console.log(`now requesting ${redirectedPath}`);
+          }
+          if (fs.existsSync(path.resolve(resource.context, redirectedPath))) {
+            resource.request = redirectedPath;
+            console.log(`instead requesting ${resource.request}`);
+          } else {
+            console.log(`resource does not exist at ${resource.context} and ${redirectedPath}`);
+          }
+        }
+      )
     ]
   });
   return config;

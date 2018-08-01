@@ -3,6 +3,7 @@ const path = require('path');
 const PROJECT_ROOT = path.resolve(__dirname);
 
 const plugins = [
+  'gatsby-plugin-react-next',
   'gatsby-plugin-react-helmet',
   'gatsby-plugin-sharp',
   'gatsby-transformer-sharp',
@@ -57,20 +58,20 @@ const plugins = [
       name: 'images'
     }
   },
-  {
-    resolve: 'gatsby-transformer-remark',
-    options: {
-      plugins: [
-        `gatsby-remark-autolink-headers`,
-        {
-          resolve: `gatsby-remark-prismjs`,
-          options: {
-            classPrefix: 'prism-language-'
-          }
-        }
-      ]
-    }
-  },
+  // {
+  //   resolve: 'gatsby-transformer-remark',
+  //   options: {
+  //     plugins: [
+  //       `gatsby-remark-autolink-headers`,
+  //       {
+  //         resolve: `gatsby-remark-prismjs`,
+  //         options: {
+  //           classPrefix: 'prism-language-'
+  //         }
+  //       }
+  //     ]
+  //   }
+  // },
   {
     resolve: 'gatsby-remark-embed-snippet',
     options: {
@@ -90,7 +91,41 @@ const plugins = [
       name: `layouts`,
       path: `${PROJECT_ROOT}/_repos/react/layouts`,
     }
-  }
+  },
+  {
+    resolve: `gatsby-plugin-page-creator`,
+    options: {
+      path: `${PROJECT_ROOT}/_repos/react-docs/pages`,
+      name: 'pages'
+    }
+  },
+  'gatsby-transformer-react-docgen',
+  {
+    resolve: `gatsby-transformer-remark`,
+    options: {
+      plugins: [
+        `gatsby-remark-prismjs`
+      ]
+    }
+  },
+  {
+    resolve: 'gatsby-plugin-transform-imports',
+    options: {
+      'react-bootstrap': {
+        transform: './angle-double-left-icon',
+        preventFullImport: true,
+      },
+      lodash: {
+        transform: 'lodash/${member}',
+        preventFullImport: true,
+      },
+      '@patternfly/react-icons': {
+        kebabCase: true,
+        preventFullImport: true,
+        transform: '@patternfly/react-icons/dist/js/icons/${member}'
+      }
+    },
+  },
 ];
 
 module.exports = {

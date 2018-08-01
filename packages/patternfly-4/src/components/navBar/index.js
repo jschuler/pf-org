@@ -17,6 +17,11 @@ import ToggleButton from 'react-toggle-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoffee, faSearch } from '@fortawesome/free-solid-svg-icons'
 import './_.main-nav.scss';
+import logo from '../../assets/logo.png';
+// import { css } from '@patternfly/react-styles';
+// import styles from './navigation.styles';
+
+const HTML = false;
 
 export default class NavBar extends React.Component {
 
@@ -27,7 +32,7 @@ export default class NavBar extends React.Component {
     this.state = {
       isOpen: false,
       active: 0,
-      toggleValue: false
+      toggleValue: HTML
     };
   }
 
@@ -48,6 +53,11 @@ export default class NavBar extends React.Component {
       <div>
         <Navbar color="dark" dark expand="md">
           <NavbarBrand>
+            {/* <div className={css(styles.logo)}>
+              <Link to="/">
+                <img src={logo} alt="PatternFly Logo" />
+              </Link>
+            </div> */}
             <Link to="/" className="navbar-brand">PatternFly</Link>
           </NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
@@ -77,11 +87,12 @@ export default class NavBar extends React.Component {
                   activeLabel={<span>React</span>}
                   value={this.state.toggleValue}
                   onToggle={(value) => {
+                    const toggledValue = !value;
                     this.setState({
-                      toggleValue: !value,
+                      toggleValue: toggledValue,
                     });
                     // console.log(this.props.location);
-                    // this.props.onToggleChange(this.state.toggleValue);
+                    this.props.onToggleChange(toggledValue);
                     // push('/');
                   }}
                   colors={{
@@ -119,5 +130,5 @@ export default class NavBar extends React.Component {
 }
 
 NavBar.defaultProps = {
-  toggleValue: false
+  toggleValue: HTML
 };
