@@ -17,6 +17,11 @@ import ToggleButton from 'react-toggle-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoffee, faSearch } from '@fortawesome/free-solid-svg-icons'
 import './_.main-nav.scss';
+import logo from '../../assets/logo.png';
+// import { css } from '@patternfly/react-styles';
+// import styles from './navigation.styles';
+
+const HTML = false;
 
 export default class NavBar extends React.Component {
 
@@ -27,7 +32,7 @@ export default class NavBar extends React.Component {
     this.state = {
       isOpen: false,
       active: 0,
-      toggleValue: false
+      toggleValue: HTML
     };
   }
 
@@ -47,17 +52,22 @@ export default class NavBar extends React.Component {
     return (
       <div>
         <Navbar color="dark" dark expand="md">
-          <NavbarBrand>
+          <NavbarBrand tag="div">
+            {/* <div className={css(styles.logo)}>
+              <Link to="/">
+                <img src={logo} alt="PatternFly Logo" />
+              </Link>
+            </div> */}
             <Link to="/" className="navbar-brand">PatternFly</Link>
           </NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/getting-started/">Get Started</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/getting-started/overview">Get Started</Link>
               </NavItem>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/docs/foundations/">Documentation</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/docs/">Documentation</Link>
               </NavItem>
               <NavItem>
                 <Link className="nav-link" activeClassName="nav-active" to="/demos/">Prototypes</Link>
@@ -77,12 +87,13 @@ export default class NavBar extends React.Component {
                   activeLabel={<span>React</span>}
                   value={this.state.toggleValue}
                   onToggle={(value) => {
+                    const toggledValue = !value;
                     this.setState({
-                      toggleValue: !value,
+                      toggleValue: toggledValue,
                     });
                     // console.log(this.props.location);
-                    // this.props.onToggleChange(this.state.toggleValue);
-                    // push('/');
+                    this.props.onToggleChange(toggledValue);
+                    push('/docs/');
                   }}
                   colors={{
                     inactive: {
@@ -119,5 +130,5 @@ export default class NavBar extends React.Component {
 }
 
 NavBar.defaultProps = {
-  toggleValue: false
+  toggleValue: HTML
 };

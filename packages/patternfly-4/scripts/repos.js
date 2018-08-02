@@ -5,6 +5,8 @@ const sourceCore = 'node_modules/@patternfly/patternfly-next/src';
 const destinationCore = '_repos/core';
 const sourceReact = 'node_modules/@patternfly/react-lerna-root/packages/react-core/src';
 const destinationReact = '_repos/react';
+const sourceReactDocs = 'node_modules/@patternfly/react-lerna-root/packages/react-docs/src';
+const destinationReactDocs = '_repos/react-docs';
 
 fs.remove(reposDir, (errRemove) => {
   if (errRemove) {
@@ -48,6 +50,26 @@ fs.remove(reposDir, (errRemove) => {
       if (errCopyReact) {
         // eslint-disable-next-line no-console
         return console.error(errCopyReact);
+      }
+      // eslint-disable-next-line no-console
+      console.log('Copied react into _repos dir');
+    });
+  });
+
+  // create directory structure
+  fs.ensureDir(destinationReactDocs, (errCreateReactDocs) => {
+    if (errCreateReactDocs) {
+      // eslint-disable-next-line no-console
+      return console.error(errCreateReactDocs);
+    }
+    // eslint-disable-next-line no-console
+    console.log('Created _repos/react-docs dir');
+
+    // Copy files
+    fs.copy(sourceReactDocs, destinationReactDocs, (errCopyReactDocs) => {
+      if (errCopyReactDocs) {
+        // eslint-disable-next-line no-console
+        return console.error(errCopyReactDocs);
       }
       // eslint-disable-next-line no-console
       console.log('Copied react into _repos dir');
