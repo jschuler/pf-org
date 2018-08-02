@@ -23,6 +23,9 @@ yarn-error.log*
 # Yarn Integrity file
 .yarn-integrity
 
+# Yarn lock file
+yarn.lock
+
 # Optional eslint cache
 .eslintcache
 
