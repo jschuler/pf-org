@@ -14,11 +14,15 @@ const routeShape = PropTypes.shape({
 });
 
 const propTypes = {
+  routes: PropTypes.array,
+  nested: PropTypes.bool,
   componentRoutes: PropTypes.arrayOf(routeShape),
   layoutRoutes: PropTypes.arrayOf(routeShape)
 };
 
 const defaultProps = {
+  routes: [],
+  nested: true,
   componentRoutes: [],
   layoutRoutes: []
 };
@@ -38,7 +42,7 @@ class Navigation extends React.Component {
   };
 
   render() {
-    const { componentRoutes, layoutRoutes } = this.props;
+    const { routes, componentRoutes, layoutRoutes, nested } = this.props;
     const { searchValue } = this.state;
     const searchRE = new RegExp(searchValue, 'i');
 
@@ -50,67 +54,84 @@ class Navigation extends React.Component {
       searchRE.test(c.label)
     );
 
-    return (
-      <div className={css(styles.navigation)}>
-        <div className={css(styles.navigationContent)}>
-          {/* <div className={css(styles.search)}>
-            <input
-              className={css(styles.input)}
-              placeholder="Find components, templates,..."
-              type="text"
-              value={searchValue}
-              onChange={this.handleSearchChange}
-            />
-          </div> */}
-          {/* <ValueToggle defaultValue>
+    if (!nested) {
+      const routeChildren = routes.map((route, index) => {
+        const { label, to } = route;
+        return (
+          <NavigationItem key={`${route.label}-${index}`} to={route.to}>
+            {route.label}
+          </NavigationItem>
+        );
+      });
+      return (
+        <div>
+          {routeChildren}
+        </div>
+        // <ValueToggle defaultValue>
+        //   {({ value, toggle }) => (
+        //     <NavigationItemGroup
+        //       isExpanded={value}
+        //       onToggleExpand={toggle}
+        //       title={title}
+        //     >
+        //       {routeChildren}
+        //     </NavigationItemGroup>
+        //   )}
+        // </ValueToggle>
+      );
+    } else {
+      const allRoutes = routes.map((routeParent, index) => {
+        const { title, children } = routeParent;
+        const routeChildren = children.map((route, index) => (
+          <NavigationItem key={`${title}-${route.label}-${index}`} to={route.to}>
+            {route.label}
+          </NavigationItem>
+        ));
+        return (
+          <ValueToggle defaultValue key={`${routeParent.title}`}>
             {({ value, toggle }) => (
               <NavigationItemGroup
                 isExpanded={value}
                 onToggleExpand={toggle}
-                title="Style"
+                title={title}
               >
-                <NavigationItem to="/styles/tokens">Tokens</NavigationItem>
-                <NavigationItem to="/styles/icons">Icons</NavigationItem>
+                {routeChildren}
               </NavigationItemGroup>
             )}
-          </ValueToggle> */}
-          {Boolean(filteredComponentRoutes.length) && (
-            <ValueToggle defaultValue>
+          </ValueToggle>
+        );
+      });
+
+      return (
+        <div className={css(styles.navigation)}>
+          <div className={css(styles.navigationContent)}>
+            {/* <div className={css(styles.search)}>
+              <input
+                className={css(styles.input)}
+                placeholder="Find components, templates,..."
+                type="text"
+                value={searchValue}
+                onChange={this.handleSearchChange}
+              />
+            </div> */}
+            {/* <ValueToggle defaultValue>
               {({ value, toggle }) => (
                 <NavigationItemGroup
                   isExpanded={value}
                   onToggleExpand={toggle}
-                  title="Components"
+                  title="Style"
                 >
-                  {filteredComponentRoutes.map(route => (
-                    <NavigationItem key={route.label} to={route.to}>
-                      {route.label}
-                    </NavigationItem>
-                  ))}
+                  <NavigationItem to="/styles/tokens">Tokens</NavigationItem>
+                  <NavigationItem to="/styles/icons">Icons</NavigationItem>
                 </NavigationItemGroup>
               )}
-            </ValueToggle>
-          )}
-          {Boolean(filteredLayoutRoutes.length) && (
-            <ValueToggle defaultValue>
-              {({ value, toggle }) => (
-                <NavigationItemGroup
-                  isExpanded={value}
-                  onToggleExpand={toggle}
-                  title="Layouts"
-                >
-                  {filteredLayoutRoutes.map(route => (
-                    <NavigationItem key={route.label} to={route.to}>
-                      {route.label}
-                    </NavigationItem>
-                  ))}
-                </NavigationItemGroup>
-              )}
-            </ValueToggle>
-          )}
+            </ValueToggle> */}
+            {allRoutes}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+
   }
 }
 

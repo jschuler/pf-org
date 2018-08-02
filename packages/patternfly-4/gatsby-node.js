@@ -44,7 +44,7 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
     // }
     // console.log(`\n\nin here cause ${output}`);
     if (reactComponentPathRegEx.test(node.componentPath)) {
-      console.log(`\n\nregex ok: ${node.path} and ${node.internal.type}`);
+      // console.log(`\n\nregex ok: ${node.path} and ${node.internal.type}`);
       const pathLabel = node.path
         .split('/')
         .filter(Boolean)
@@ -87,6 +87,7 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
     if (node.fileAbsolutePath.includes('react')) {
       console.log(`REACT COMPONENT`);
     }
+    // console.log(`a node.fileAbsolutePath: ${node.fileAbsolutePath}`);
     const isPage = node.fileAbsolutePath.includes(PAGES_BASE_DIR);
     const isComponent = node.fileAbsolutePath.includes(COMPONENTS_BASE_DIR);
     const isLayout = node.fileAbsolutePath.includes(LAYOUTS_BASE_DIR);
@@ -95,13 +96,16 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
     if (isPage) {
       const relativePath = path.relative(PAGES_BASE_DIR, node.fileAbsolutePath);
       const pagePath = `/${relativePath}`.replace(/\.md$/, '');
+      console.log(`isPage: ${pagePath}`);
       createNodeField({ node, name: 'path', value: pagePath });
       createNodeField({ node, name: 'type', value: 'page' });
       createNodeField({ node, name: 'contentType', value: 'page' });
     } else if (isComponent) {
+      // node.path = `/docs${node.path}`;
       // console.log(`component path: ${node.fileAbsolutePath}`);
       const componentName = path.basename(path.dirname(node.fileAbsolutePath));
       const pagePath = `/components/${componentName}/docs`;
+      console.log(`isComponent: ${pagePath}`);
       createNodeField({ node, name: 'path', value: pagePath });
       createNodeField({ node, name: 'type', value: 'documentation' });
       createNodeField({ node, name: 'contentType', value: 'component' });
@@ -209,11 +213,13 @@ exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, 
 
 exports.onCreatePage = async ({ page, boundActionCreators }) => {
   const { createPage } = boundActionCreators;
-  const CATEGORY_PAGE_REGEX = /^\/(components|layouts|demos|utilities)\/$/;
-  const CATEGORY_CHILD_PAGE_REGEX = /^\/(components|layouts|demos|utilities)\/([A-Za-z0-9_-]+)/;
+  const CATEGORY_PAGE_REGEX = /^\/docs\/(components|layouts|demos|utilities)\/$/;
+  const CATEGORY_CHILD_PAGE_REGEX = /^\/docs\/(components|layouts|demos|utilities)\/([A-Za-z0-9_-]+)/;
+  const GETTING_STARTED_PAGE_REGEX = /\/src\/pages\/getting-started\//;
   return new Promise((resolve, reject) => {
     const isCategoryPage = page.path.match(CATEGORY_PAGE_REGEX);
     const isCategoryChildPage = page.path.match(CATEGORY_CHILD_PAGE_REGEX);
+    const isGettingStartedPage = page.componentPath.match(GETTING_STARTED_PAGE_REGEX);
 
     page.context.type = 'page';
     page.context.category = 'page';
@@ -222,14 +228,16 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
     page.context.title = '';
     page.layout = 'main';
 
-    if (isCategoryPage) {
+    console.log(`page.path: ${page.path} and therefore isCategoryChildPage: ${isCategoryChildPage}`);
+
+    if (isGettingStartedPage) {
+      page.layout = 'getting-started';
+    } else if (isCategoryPage) {
       page.context.type = 'category';
       page.context.category = page.path.match(CATEGORY_PAGE_REGEX)[1];
     } else if (isCategoryChildPage) {
       const pageCategory = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[1];
       const pageSlug = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[2];
-      // console.log(`pageSlug ${pageSlug}`);
-      // console.log(`page path ${page.path}`);
       const pageName = pageSlug.replace('-', ' ');
       const pageTitle = inflection.titleize(pageName);
       page.context.type = inflection.singularize(pageCategory);
@@ -237,17 +245,16 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
       page.context.slug = pageSlug;
       page.context.name = pageName;
       page.context.title = pageTitle;
-      // page.path = `/docs${page.path}`;
       page.path = `${page.path}`;
+
+      // create full demo page for each component
+      const demoPage = Object.assign({}, page);
+      demoPage.layout = 'demo';
+      const nodePath = demoPage.path;
+      demoPage.path = `${nodePath.substr(0, nodePath.length - 1)}-full/`;
+      createPage(demoPage);
     }
     createPage(page);
-
-    // create full demo page for each component
-    const demoPage = Object.assign({}, page);
-    demoPage.layout = 'demo';
-    const nodePath = demoPage.path;
-    demoPage.path = `${nodePath.substr(0, nodePath.length - 1)}-full/`;
-    createPage(demoPage);
 
     resolve();
   });

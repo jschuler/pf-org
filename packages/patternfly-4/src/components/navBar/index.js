@@ -52,7 +52,7 @@ export default class NavBar extends React.Component {
     return (
       <div>
         <Navbar color="dark" dark expand="md">
-          <NavbarBrand>
+          <NavbarBrand tag="div">
             {/* <div className={css(styles.logo)}>
               <Link to="/">
                 <img src={logo} alt="PatternFly Logo" />
@@ -64,10 +64,10 @@ export default class NavBar extends React.Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/getting-started/">Get Started</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/getting-started/overview">Get Started</Link>
               </NavItem>
               <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/docs/foundations/">Documentation</Link>
+                <Link className="nav-link" activeClassName="nav-active" to="/docs/">Documentation</Link>
               </NavItem>
               <NavItem>
                 <Link className="nav-link" activeClassName="nav-active" to="/demos/">Prototypes</Link>
@@ -93,7 +93,7 @@ export default class NavBar extends React.Component {
                     });
                     // console.log(this.props.location);
                     this.props.onToggleChange(toggledValue);
-                    // push('/');
+                    push('/docs/');
                   }}
                   colors={{
                     inactive: {

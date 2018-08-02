@@ -78,9 +78,19 @@ const _createPage = (filePath, pagesDirectory, createPage) => {
     return;
   }
 
+  const reactComponentPathRegEx = /\/react-docs\/pages\/(components|layouts|demos|utilities)\//;
+  const coreComponentPathRegEx = /\/core\/patternfly\/(components|layouts|demos|utilities)\//;
+
+  const prefixThis = ['/components/', '/layouts/', '/demos/', '/styles/', '/utilities/'];
+  let path = createPath(pagesDirectory, filePath);
+  if (reactComponentPathRegEx.test(filePath) || coreComponentPathRegEx.test(filePath)) {
+    path = `/docs${path}`;
+  }
+  // console.log(`\n\npagesDirectory: ${pagesDirectory}\nfilePath ${filePath}`);
+
   // Create page object
   const page = {
-    path: createPath(pagesDirectory, filePath),
+    path,
     component: filePath,
     layout: 'index'
   };
