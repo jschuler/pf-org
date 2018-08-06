@@ -1,7 +1,9 @@
 import React from 'react';
 import Page from '../components/page';
 import Navigation from '../components/navigation';
+import Prisim from 'prismjs'; // eslint-disable-line no-unused-vars
 
+import 'prismjs/themes/prism-coy.css';
 import '../../_repos/core/patternfly/patternfly-base.scss';
 import '../../sass/style.scss';
 import './_.main.scss';
