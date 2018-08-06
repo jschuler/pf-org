@@ -2,8 +2,13 @@ const babelENV = process.env.BABEL_ENV || 'development';
 const modules = babelENV !== 'production:esm' ? 'commonjs' : false;
 
 module.exports = {
+  presets: [['env', { modules }], 'react'],
   plugins: [
-    [
+    'transform-class-properties',
+    'transform-export-extensions',
+    'transform-object-rest-spread',
+    'transform-object-assign',
+    babelENV !== 'development' && [
       'transform-imports',
       {
         '@patternfly/react-icons': {
@@ -11,15 +16,12 @@ module.exports = {
           preventFullImport: true,
           transform: importName => {
             if (importName.toLowerCase() === 'icon') {
-              console.log('Icon import is not allowed');
               throw new Error('Icon import is not allowed');
             }
             const importPath = `icons/${importName}`;
             if (!modules) {
-              console.log('No modules');
               return `@patternfly/react-icons/dist/esm/${importPath}`;
             }
-            console.log(`cool: @patternfly/react-icons/dist/js/${importPath}`);
             return `@patternfly/react-icons/dist/js/${importPath}`;
           }
         }
