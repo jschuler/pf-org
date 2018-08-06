@@ -15,14 +15,9 @@ const LAYOUTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/layouts')
 const UTILITIES_PATH = path.resolve(__dirname, './_repos/core/patternfly/utilities');
 
 const COMPONENT_PATHS = fs.readdirSync(COMPONENTS_PATH).map(name => path.resolve(COMPONENTS_PATH, `./${name}`));
-
 const DEMO_PATH = fs.readdirSync(DEMOS_PATH).map(name => path.resolve(DEMOS_PATH, `./${name}`));
-
 const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
-
 const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
-
-// const reactComponentPathRegEx = /(components|layouts)\//;
 const reactComponentPathRegEx = /(\/react-docs\/pages\/components|\/react-docs\/pages\/layouts)\//;
 const coreComponentPathRegEx = /(\/core\/patternfly\/components|\/core\/patternfly\/layouts)\//;
 
@@ -36,20 +31,12 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
   const isMarkdown = node.internal.type === 'MarkdownRemark';
   const isSitePage = node.internal.type === 'SitePage';
 
-  // console.log(`\nin here cause ${node.path} and ${node.internal.type}`);
   if (isSitePage) {
-    // var output = '\n';
-    // for (var property in node) {
-    //   output += property + ': ' + node[property]+'; ';
-    // }
-    // console.log(`\n\nin here cause ${output}`);
     if (reactComponentPathRegEx.test(node.componentPath)) {
-      // console.log(`\n\nregex ok: ${node.path} and ${node.internal.type}`);
       const pathLabel = node.path
         .split('/')
         .filter(Boolean)
         .pop();
-      // console.log(`creating react component ${pathLabel} for path ${node.path}`);
       createNodeField({
         node,
         name: 'label',
@@ -76,18 +63,11 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
 
   } else if (isMarkdown) {
     if (!node.fileAbsolutePath) {
-      var output = '';
-      // console.log(`\nin here cause ${node.path} and ${node.internal.type}`);
-      for (var property in node) {
-        output += property + ': ' + node[property]+';\n';
-      }
-      // console.log(`\nno fileAbsolutePath: in here cause ${output}`);
       return;
     }
     if (node.fileAbsolutePath.includes('react')) {
       console.log(`REACT COMPONENT`);
     }
-    // console.log(`a node.fileAbsolutePath: ${node.fileAbsolutePath}`);
     const isPage = node.fileAbsolutePath.includes(PAGES_BASE_DIR);
     const isComponent = node.fileAbsolutePath.includes(COMPONENTS_BASE_DIR);
     const isLayout = node.fileAbsolutePath.includes(LAYOUTS_BASE_DIR);
@@ -101,11 +81,8 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
       createNodeField({ node, name: 'type', value: 'page' });
       createNodeField({ node, name: 'contentType', value: 'page' });
     } else if (isComponent) {
-      // node.path = `/docs${node.path}`;
-      // console.log(`component path: ${node.fileAbsolutePath}`);
       const componentName = path.basename(path.dirname(node.fileAbsolutePath));
       const pagePath = `/components/${componentName}/docs`;
-      console.log(`isComponent: ${pagePath}`);
       createNodeField({ node, name: 'path', value: pagePath });
       createNodeField({ node, name: 'type', value: 'documentation' });
       createNodeField({ node, name: 'contentType', value: 'component' });
@@ -215,11 +192,13 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
   const { createPage } = boundActionCreators;
   const CATEGORY_PAGE_REGEX = /^\/docs\/(components|layouts|demos|utilities)\/$/;
   const CATEGORY_CHILD_PAGE_REGEX = /^\/docs\/(components|layouts|demos|utilities)\/([A-Za-z0-9_-]+)/;
+  const DEMO_PAGE_REGEX = /^\/demos\/([A-Za-z0-9_-]+)/;
   const GETTING_STARTED_PAGE_REGEX = /\/src\/pages\/getting-started\//;
   return new Promise((resolve, reject) => {
     const isCategoryPage = page.path.match(CATEGORY_PAGE_REGEX);
     const isCategoryChildPage = page.path.match(CATEGORY_CHILD_PAGE_REGEX);
     const isGettingStartedPage = page.componentPath.match(GETTING_STARTED_PAGE_REGEX);
+    const isDemoPage = page.path.match(DEMO_PAGE_REGEX);
 
     page.context.type = 'page';
     page.context.category = 'page';
@@ -228,14 +207,26 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
     page.context.title = '';
     page.layout = 'main';
 
-    console.log(`page.path: ${page.path} and therefore isCategoryChildPage: ${isCategoryChildPage}`);
+    // console.log(`page.path: ${page.path} and therefore isCategoryChildPage: ${isCategoryChildPage}`);
 
     if (isGettingStartedPage) {
       page.layout = 'getting-started';
     } else if (isCategoryPage) {
       page.context.type = 'category';
       page.context.category = page.path.match(CATEGORY_PAGE_REGEX)[1];
+    } else if (isDemoPage) {
+      // console.log(page.path);
+      const pageSlug = page.path.match(DEMO_PAGE_REGEX)[1];
+      const pageName = pageSlug.replace('-', ' ');
+      const pageTitle = inflection.titleize(pageName);
+      page.context.type = 'demo';
+      page.context.category = 'demo';
+      page.context.slug = pageSlug;
+      page.context.name = pageName;
+      page.context.title = pageTitle;
+      page.path = `${page.path}`;
     } else if (isCategoryChildPage) {
+      // console.log(page.path);
       const pageCategory = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[1];
       const pageSlug = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[2];
       const pageName = pageSlug.replace('-', ' ');
@@ -315,37 +306,7 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
       new WebpackNotifierPlugin({
         title: 'PF-4',
         skipFirstNotification: true
-      }),
-      new Webpack.NormalModuleReplacementPlugin(
-        /^inactive-@patternfly\/patternfly-next/,
-        function(resource) {
-          console.log(`\nrequesting ${resource.request}`);
-          var resolvedPath;
-          var redirectedPath;
-          // should be:
-          // /Users/jschuler/Documents/GitHub/pf-org/packages/patternfly-4/_repos/react/components/Alert
-          // but is:
-          // /Users/jschuler/Documents/GitHub/pf-org/packages/patternfly-4/_repos/core/patternfly/layouts/Grid/styles.css
-          // /Users/jschuler/Documents/GitHub/pf-org/packages/patternfly-4/_repos/core/patternfly/layouts/Grid/styles.scss
-          if (resource.request.indexOf('components') > -1) {
-            resolvedPath = path.resolve(__dirname, './_repos/core/patternfly/components');
-            redirectedPath = resource.request.replace(/^@patternfly\/patternfly-next\/components/, resolvedPath);
-            redirectedPath = redirectedPath.replace(/\.css$/, '.scss');
-            // console.log(`now requesting ${redirectedPath}`);
-          } else {
-            resolvedPath = path.resolve(__dirname, './_repos/core/patternfly/layouts');
-            redirectedPath = resource.request.replace(/^@patternfly\/patternfly-next\/layouts/, resolvedPath);
-            redirectedPath = redirectedPath.replace(/\.css$/, '.scss');
-            // console.log(`now requesting ${redirectedPath}`);
-          }
-          if (fs.existsSync(path.resolve(resource.context, redirectedPath))) {
-            resource.request = redirectedPath;
-            console.log(`instead requesting ${resource.request}`);
-          } else {
-            console.log(`resource does not exist at ${resource.context} and ${redirectedPath}`);
-          }
-        }
-      )
+      })
     ]
   });
   return config;

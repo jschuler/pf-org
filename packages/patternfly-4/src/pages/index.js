@@ -1,7 +1,7 @@
 import React from 'react';
 import './_pages.scss';
-import styles from './index.styles';
-import { css } from '@patternfly/react-styles';
+// import styles from './index.styles';
+// import { css } from '@patternfly/react-styles';
 import logo from '../assets/logo.png';
 import packageJson from '../../package.json';
 import { Button } from 'reactstrap';

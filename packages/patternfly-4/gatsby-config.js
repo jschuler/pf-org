@@ -3,7 +3,6 @@ const path = require('path');
 const PROJECT_ROOT = path.resolve(__dirname);
 
 const plugins = [
-  'gatsby-plugin-react-next',
   'gatsby-plugin-react-helmet',
   'gatsby-plugin-sharp',
   'gatsby-transformer-sharp',
