@@ -1,5 +1,5 @@
 {
-  "name": "@patternfly/org-lerna-root",
+  "name": "@patternfly/website-lerna-root",
   "private": true,
   "version": "0.0.0",
   "author": "Red Hat",

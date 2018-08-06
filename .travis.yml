@@ -3,13 +3,6 @@ node_js:
   - "8"
 sudo: required
 cache: yarn
-env:
-  global:
-  - ENCRYPTION_LABEL: 6c432af47126
-  - COMMIT_AUTHOR_EMAIL: patternfly-build@redhat.com
-  - COMMIT_AUTHOR_USERNAME: patternfly-build
-  - TRIGGER_REPO_SLUG: jschuler/pf-org
-  - TRIGGER_REPO_BRANCH: master
 deploy:
   provider: pages
   skip_cleanup: true

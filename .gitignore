@@ -20,7 +20,6 @@ npm.cmd
 # Ignore generated files
 patternfly.spec
 _build
-_patternfly-4
 *.map
 =======
 packages/patternfly-3/_site
