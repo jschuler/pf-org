@@ -2,7 +2,6 @@ import React from 'react';
 import './_pages.scss';
 // import styles from './index.styles';
 // import { css } from '@patternfly/react-styles';
-import logo from '../assets/logo.png';
 import packageJson from '../../package.json';
 import { Button } from 'reactstrap';
 
@@ -10,50 +9,50 @@ const REACT_VERSION = React.version;
 
 const IndexPage = ({data, props}) =>
   (
-    <div className="h-100">
+    <div className="h-100 wpf-page">
 
-      <div className="d-flex">
+      <div className="d-flex section dark-bg">
         <div className="p-5">
-          <img src={logo} alt="PatternFly Logo" />
-          <h1 className="pt-3 pb-3">Build better experiences with repeatable, scalable design.</h1>
-          <h2 className="pt-3 pb-3">PatternFly is a design system for enterprise web applications, built and supported by a collaborative community of designers and developers.</h2>
-          <p>Version: {packageJson.version}</p>
+          <div className="mt-3 mb-3 logo"></div>
+          <div className="pt-3 pb-3 hero-title">Build better experiences with repeatable, scalable design.</div>
+          <div className="pt-3 pb-3 large-text">PatternFly is a design system for enterprise web applications, built and supported by a collaborative community of designers and developers.</div>
+          <div className="pt-3 pb-3">Version: {packageJson.version}</div>
           <div>
-            <span className="pr-3 font-weight-bold">Get Started for</span>
-            <Button color="primary" className="m-3">Developers</Button>{' '}
-            <Button color="secondary" className="m-3">Designers</Button>{' '}
+            <span className="pr-3 large-text">Get Started for</span>
+            <Button className="m-3" size="lg">Developers</Button>{' '}
+            <Button className="m-3" size="lg">Designers</Button>{' '}
           </div>
         </div>
         <img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"></img>
       </div>
 
-      <div className="p-5">
-        <h1 className="pt-3 pb-3">This is who we are.</h1>
-        <h2 className="pt-3 pb-3">PatternFly is an open source UI framework that offers code, patterns, styles, and community support to promote consistent design and delightful user experiences.</h2>
+      <div className="p-5 section light-bg">
+        <div className="pt-3 pb-3 hero-title text-center">This is who we are.</div>
+        <div className="pt-3 pb-3 large-text">PatternFly is an open source UI framework that offers code, patterns, styles, and community support to promote consistent design and delightful user experiences.</div>
         <div className="container-fluid p-3">
           <div className="row">
             <div className="col text-center">
               <img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"></img>
-              <h3>Modular & Flexible</h3>
-              <h5>Arrange self-contained components in any number of ways to build a variety of applications and interfaces.</h5>
+              <div className="pt-3 sub-header">Modular & Flexible</div>
+              <div className="pt-3 pb-3 body-text">Arrange self-contained components in any number of ways to build a variety of applications and interfaces.</div>
             </div>
             <div className="col text-center">
               <img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"></img>
-              <h3>Accessible Design</h3>
-              <h5>Take advantage of accessible markup and guidance, because building applications that work for everyone is just the right thing to do.</h5>
+              <div className="pt-3 sub-header">Accessible Design</div>
+              <div className="pt-3 pb-3 body-text">Take advantage of accessible markup and guidance, because building applications that work for everyone is just the right thing to do.</div>
             </div>
             <div className="col text-center">
               <img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180"></img>
-              <h3>Built for teams, built to scale</h3>
-              <h5>Enable consistency and unify teams. PatternFly 4 is built to support both designers and developers, making it easier than ever to translate wireframes into pixel-perfect user experiences.</h5>
+              <div className="pt-3 sub-header">Built for teams, built to scale</div>
+              <div className="pt-3 pb-3 body-text">Enable consistency and unify teams. PatternFly 4 is built to support both designers and developers, making it easier than ever to translate wireframes into pixel-perfect user experiences.</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="p-5">
-        <h1 className="pt-3 pb-3">Meet PatternFly 4.</h1>
-        <h2 className="pt-3 pb-3">PatternFly is an open source UI framework that offers code, patterns, styles, and community support to promote consistent design and delightful user experiences.</h2>
+      <div className="p-5 section light-bg">
+        <div className="pt-3 pb-3 hero-title">Meet PatternFly 4.</div>
+        <div className="pt-3 pb-3 large-text">PatternFly is an open source UI framework that offers code, patterns, styles, and community support to promote consistent design and delightful user experiences.</div>
         <div className="container-fluid p-3">
           <div className="row pt-5 pb-5">
             <div className="col">
@@ -88,7 +87,7 @@ const IndexPage = ({data, props}) =>
         </div>
       </div>
 
-      <div className="p-5 text-center">
+      <div className="p-5 text-center section dark-bg">
         <h2 className="p-4">Ready to contribute to PatternFly?</h2>
         <h3 className="p-4">PatternFly 4 is a community that thrives off of people like you contributing. To learn how to get started contributing, check out our Contribute page.</h3>
         <Button color="primary" className="">Get Started</Button>{' '}

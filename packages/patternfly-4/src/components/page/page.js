@@ -9,14 +9,16 @@ const propTypes = {
   title: PropTypes.string,
   children: PropTypes.node,
   navigation: PropTypes.node,
-  receiveFromChild: PropTypes.func
+  receiveFromChild: PropTypes.func,
+  location: PropTypes.string
 };
 
 const defaultProps = {
   title: 'PatternFly',
   children: null,
   navigation: null,
-  receiveFromChild: null
+  receiveFromChild: null,
+  location: null
 };
 
 // const getToggleData = function(data) {
@@ -27,7 +29,7 @@ const defaultProps = {
 //   // });
 // };
 
-const Page = ({ navigation, children, title, receiveFromChild }) => {
+const Page = ({ navigation, children, title, receiveFromChild, location }) => {
   
   return (
     <React.Fragment>
@@ -46,7 +48,7 @@ const Page = ({ navigation, children, title, receiveFromChild }) => {
           crossOrigin="anonymous"
         />
       </Helmet>
-      <NavBar onToggleChange={receiveFromChild} />
+      <NavBar onToggleChange={receiveFromChild} location={location} />
       <div className={css(styles.page)}>
         {navigation &&
           <aside className={css(styles.nav)}>{navigation}</aside>

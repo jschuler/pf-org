@@ -1,7 +1,6 @@
 import React from 'react';
 import Page from '../components/page';
 import SideNav from '../components/sideNav';
-// import './_pages.scss';
 
 const routes = [{
   label: 'Overview',
@@ -24,9 +23,10 @@ const getToggleData = function(data) {
   console.log(`getting-started: ${data}`);
 };
 
-export default ({ children }) =>
+export default ({ children, location }) =>
   <Page
     receiveFromChild={getToggleData}
+    location={location.pathname}
     title="PatternFly"
     navigation={
       <SideNav

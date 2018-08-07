@@ -10,36 +10,35 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem } from 'reactstrap';
+  DropdownItem,
+  Button, 
+  ButtonGroup } from 'reactstrap';
 import Link from 'gatsby-link';
 import { push } from 'gatsby-link';
-import ToggleButton from 'react-toggle-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCoffee, faSearch } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 import './_.main-nav.scss';
 import logo from '../../assets/logo.png';
-// import { css } from '@patternfly/react-styles';
-// import styles from './navigation.styles';
 
-const HTML = false;
+export const toggleEnums = {
+  HTML: 1,
+  REACT: 2
+};
 
 export default class NavBar extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.toggle = this.toggle.bind(this);
     this.state = {
       isOpen: false,
       active: 0,
-      toggleValue: HTML
+      rSelected: 1
     };
-  }
 
-  setActive(id) {
-    this.setState({
-      active: id
-    });
+    this.toggle = this.toggle.bind(this);
+    this.onRadioBtnClick = this.onRadioBtnClick.bind(this);
   }
 
   toggle() {
@@ -48,67 +47,57 @@ export default class NavBar extends React.Component {
     });
   }
 
+  onNavClick(active) {
+    this.setState({ active });
+  }
+
+  onRadioBtnClick(rSelected) {
+    this.setState({ rSelected });
+    console.log(this.props.location);
+    this.props.onToggleChange(rSelected);
+    // Programmatic navigation
+    if (this.props.location.indexOf('/docs/') > -1) {
+      push('/docs/');
+    } else {
+      push(this.props.location);
+    }
+  }
+
   render() {
     return (
       <div>
-        <Navbar color="dark" dark expand="md">
+        <Navbar dark expand="md" className="ws-c-navbar">
           <NavbarBrand tag="div">
-            {/* <div className={css(styles.logo)}>
-              <Link to="/">
-                <img src={logo} alt="PatternFly Logo" />
-              </Link>
-            </div> */}
-            <Link to="/" className="navbar-brand">PatternFly</Link>
+            <Link to="/">
+              <div className="brand">PatternFly</div>
+            </Link>
           </NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/getting-started/overview">Get Started</Link>
+              <NavItem active={this.state.active === 1}>
+                <Link className="nav-link" to="/getting-started/overview" onClick={() => this.onNavClick(1)}>Get Started</Link>
               </NavItem>
-              <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/docs/">Documentation</Link>
+              <NavItem active={this.state.active === 2}>
+                <Link className="nav-link" to="/docs/" onClick={() => this.onNavClick(2)}>Documentation</Link>
               </NavItem>
-              <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/demos/">Prototypes</Link>
+              <NavItem active={this.state.active === 3}>
+                <Link className="nav-link" to="/demos/" onClick={() => this.onNavClick(3)}>Prototypes</Link>
               </NavItem>
-              <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/contribution/">Contribute</Link>
+              <NavItem active={this.state.active === 4}>
+                <Link className="nav-link" to="/contribution/" onClick={() => this.onNavClick(4)}>Contribute</Link>
               </NavItem>
-              <NavItem>
-                <Link className="nav-link" activeClassName="nav-active" to="/blog/">Blog</Link>
+              <NavItem active={this.state.active === 5}>
+                <Link className="nav-link" to="/blog/" onClick={() => this.onNavClick(5)}>Blog</Link>
               </NavItem>
 
               <FontAwesomeIcon icon={faSearch} size="lg" inverse className="search-icon" />
               
               <div className="toggle-container">
-                <ToggleButton
-                  inactiveLabel={<span>HTML</span>}
-                  activeLabel={<span>React</span>}
-                  value={this.state.toggleValue}
-                  onToggle={(value) => {
-                    const toggledValue = !value;
-                    this.setState({
-                      toggleValue: toggledValue,
-                    });
-                    // console.log(this.props.location);
-                    this.props.onToggleChange(toggledValue);
-                    push('/docs/');
-                  }}
-                  colors={{
-                    inactive: {
-                      base: 'rgb(0,0,255)'
-                    }
-                  }}
-                  containerStyle={{display:'inline-block',width:'90px',height:'30px'}} 
-                  trackStyle={{width:'100px',height:'30px'}} 
-                  thumbStyle={{
-                    width: 30,
-                    height: 30
-                  }}
-                  thumbAnimateRange={[1, 70]} 
-                  activeLabelStyle={{ width:'45px',fontSize:'16px',left:'10px' }} 
-                  inactiveLabelStyle={{ width:'45px',fontSize:'16px',right:'6px',color:'rgb(250,250,250)' }} />
+                <ButtonGroup>
+                  <Button onClick={() => this.onRadioBtnClick(1)} active={this.state.rSelected === 1}>HTML</Button>
+                  <Button onClick={() => this.onRadioBtnClick(2)} active={this.state.rSelected === 2}>REACT</Button>
+                </ButtonGroup>
               </div>
 
               {/* <UncontrolledDropdown nav inNavbar>
@@ -130,5 +119,5 @@ export default class NavBar extends React.Component {
 }
 
 NavBar.defaultProps = {
-  toggleValue: HTML
+  toggleValue: PropTypes.oneOf([toggleEnums.HTML, toggleEnums.REACT])
 };

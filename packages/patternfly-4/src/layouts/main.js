@@ -1,12 +1,12 @@
 import React from 'react';
 import Page from '../components/page';
 import Navigation from '../components/navigation';
+import { toggleEnums } from '../components/navBar';
 import Prisim from 'prismjs'; // eslint-disable-line no-unused-vars
 
 import 'prismjs/themes/prism-coy.css';
 import '../../_repos/core/patternfly/patternfly-base.scss';
 import '../../sass/style.scss';
-import './_.main.scss';
 
 export default class MainTemplate extends React.Component {
 
@@ -74,7 +74,7 @@ export default class MainTemplate extends React.Component {
     }
 
     let routes;
-    if (this.state.toggleState) {
+    if (this.state.toggleState === toggleEnums.REACT) {
       // react
       routes = [{
         title: 'Components',
@@ -95,21 +95,18 @@ export default class MainTemplate extends React.Component {
     }
 
     return (
-      <React.Fragment>
-
-        <Page
-          receiveFromChild={this.getToggleData}
-          title="PatternFly"
-          navigation={allowed &&
-            <Navigation
-              routes={routes}
-            />
-          }
-        >
-          {this.props.children()}
-        </Page>
-
-      </React.Fragment>
+      <Page
+        receiveFromChild={this.getToggleData}
+        location={this.props.location.pathname}
+        title="PatternFly"
+        navigation={allowed &&
+          <Navigation
+            routes={routes}
+          />
+        }
+      >
+        {this.props.children()}
+      </Page>
     );
 
   }
