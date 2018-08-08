@@ -1,0 +1,2 @@
+webpackJsonp([0x94af557f7aa0],{990:function(a,t){a.exports={pathContext:{type:"layout",category:"layouts",slug:"Gallery",name:"Gallery",title:"Gallery"}}}});
+//# sourceMappingURL=path---docs-layouts-gallery-examples-ee25c37064d1c95fcb65.js.map

@@ -1,0 +1,2 @@
+webpackJsonp([0x8497621a79b7],{984:function(t,n){t.exports={pathContext:{type:"layout",category:"layouts",slug:"Alignment",name:"Alignment",title:"Alignment"}}}});
+//# sourceMappingURL=path---docs-layouts-alignment-examples-bc4468fad8d0dc0dd285.js.map

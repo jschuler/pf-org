@@ -1,0 +1,2 @@
+webpackJsonp([0x89dc1a53624b],{482:function(e,t,a){"use strict";function u(e){return e&&e.__esModule?e:{default:e}}t.__esModule=!0;var n=a(2),l=u(n),c=function(e){return l.default.createElement("div",{className:"container-fluid h-100"},l.default.createElement("div",{className:"row h-100"},"Layouts"))};t.default=c,e.exports=t.default}});
+//# sourceMappingURL=component---src-pages-docs-layouts-js-006ec5e3621ef09d49a6.js.map

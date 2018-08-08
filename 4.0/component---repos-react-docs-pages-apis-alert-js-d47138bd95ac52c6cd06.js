@@ -1,0 +1,2 @@
+webpackJsonp([0xe5a26928d26a],{419:function(e,a,t){"use strict";function u(e){return e&&e.__esModule?e:{default:e}}a.__esModule=!0,a.query=void 0;var r=t(2),d=u(r),n=t(29),f=u(n),l=t(4),o=u(l),c=(t(13),t(30)),i=(u(c),{data:o.default.any.isRequired}),s=function(e){var a=e.data;return d.default.createElement(f.default,{data:a})};s.propTypes=i;a.query="** extracted graphql fragment **";a.default=s}});
+//# sourceMappingURL=component---repos-react-docs-pages-apis-alert-js-d47138bd95ac52c6cd06.js.map

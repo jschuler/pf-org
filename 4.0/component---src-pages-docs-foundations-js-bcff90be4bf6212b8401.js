@@ -1,0 +1,2 @@
+webpackJsonp([84841682977840],{481:function(e,t,a){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}t.__esModule=!0;var u=a(2),l=n(u),d=function(e){return l.default.createElement("div",{className:"container-fluid h-100"},l.default.createElement("div",{className:"row h-100"},"Foundations"))};t.default=d,e.exports=t.default}});
+//# sourceMappingURL=component---src-pages-docs-foundations-js-bcff90be4bf6212b8401.js.map

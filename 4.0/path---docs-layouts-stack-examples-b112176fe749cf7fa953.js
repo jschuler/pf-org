@@ -1,0 +1,2 @@
+webpackJsonp([0xfa59c225ac20],{1006:function(t,a){t.exports={pathContext:{type:"layout",category:"layouts",slug:"Stack",name:"Stack",title:"Stack"}}}});
+//# sourceMappingURL=path---docs-layouts-stack-examples-b112176fe749cf7fa953.js.map

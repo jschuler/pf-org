@@ -1,0 +1,2 @@
+webpackJsonp([0x7fb78790cd9e],{1009:function(t,e){t.exports={pathContext:{type:"category",category:"layouts",slug:"",name:"",title:""}}}});
+//# sourceMappingURL=path---docs-layouts-9b99affe63b57a2c61a8.js.map

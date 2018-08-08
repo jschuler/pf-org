@@ -1,0 +1,2 @@
+webpackJsonp([93296556801581],{949:function(e,t){e.exports={pathContext:{type:"component",category:"components",slug:"Badge",name:"Badge",title:"Badge"}}}});
+//# sourceMappingURL=path---docs-components-badge-examples-full-3b83d37e7f5a5e256e68.js.map

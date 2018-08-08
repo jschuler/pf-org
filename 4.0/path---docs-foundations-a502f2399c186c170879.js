@@ -1,0 +1,2 @@
+webpackJsonp([0x9ed84655701a],{982:function(e,t){e.exports={pathContext:{type:"page",category:"page",slug:"",name:"",title:""}}}});
+//# sourceMappingURL=path---docs-foundations-a502f2399c186c170879.js.map

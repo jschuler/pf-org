@@ -1,0 +1,2 @@
+webpackJsonp([80887056152559],{948:function(e,n){e.exports={pathContext:{type:"component",category:"components",slug:"BackgroundImage",name:"BackgroundImage",title:"Backgroundimage"}}}});
+//# sourceMappingURL=path---docs-components-background-image-examples-5d1d49feb524d648b2f9.js.map

@@ -1,0 +1,2 @@
+webpackJsonp([31791058805179],{1004:function(t,p){t.exports={pathContext:{type:"layout",category:"layouts",slug:"Split",name:"Split",title:"Split"}}}});
+//# sourceMappingURL=path---docs-layouts-split-examples-1399cfe841cb5cc73b72.js.map

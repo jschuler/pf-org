@@ -1,0 +1,2 @@
+webpackJsonp([0xd461f2841e21],{1007:function(o,t){o.exports={pathContext:{type:"layout",category:"layouts",slug:"Toolbar",name:"Toolbar",title:"Toolbar"}}}});
+//# sourceMappingURL=path---docs-layouts-toolbar-examples-full-6d8dd46d40b88f35118b.js.map

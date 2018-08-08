@@ -1,0 +1,2 @@
+webpackJsonp([0xdcb312e351b6],{940:function(o,t){o.exports={pathContext:{type:"component",category:"components",slug:"AboutModalBox",name:"AboutModalBox",title:"Aboutmodalbox"}}}});
+//# sourceMappingURL=path---docs-components-about-modal-box-examples-aa5286b6b110e1e75cb2.js.map

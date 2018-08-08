@@ -1,0 +1,2 @@
+webpackJsonp([0x93c6bf9dc486],{486:function(e,t,u){"use strict";function n(e){return e&&e.__esModule?e:{default:e}}t.__esModule=!0;var l=u(2),a=n(l);t.default=function(){return a.default.createElement("div",null,a.default.createElement("h1",null,"Getting Started"))},e.exports=t.default}});
+//# sourceMappingURL=component---src-pages-getting-started-index-js-e26c715d3d68f89263ce.js.map
