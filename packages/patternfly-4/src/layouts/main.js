@@ -7,6 +7,7 @@ import Prisim from 'prismjs'; // eslint-disable-line no-unused-vars
 import 'prismjs/themes/prism-coy.css';
 import '../../_repos/core/patternfly/patternfly-base.scss';
 import '../../sass/style.scss';
+import './main.scss';
 
 export default class MainTemplate extends React.Component {
 
@@ -77,8 +78,11 @@ export default class MainTemplate extends React.Component {
     if (this.state.toggleState === toggleEnums.REACT) {
       // react
       routes = [{
-        title: 'Components',
+        title: 'Component Demos',
         children: allPages.react.component
+      }, {
+        title: 'Component APIs',
+        children: allPages.react.page
       }, {
         title: 'Layouts',
         children: allPages.react.layout

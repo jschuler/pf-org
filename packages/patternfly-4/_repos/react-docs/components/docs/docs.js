@@ -10,7 +10,7 @@ const propTypes = {
   title: PropTypes.string.isRequired,
   props: PropTypes.any.isRequired,
   description: PropTypes.string,
-  children: PropTypes.any.isRequired
+  children: PropTypes.any
 };
 
 const defaultProps = {

@@ -18,7 +18,7 @@ const COMPONENT_PATHS = fs.readdirSync(COMPONENTS_PATH).map(name => path.resolve
 const DEMO_PATH = fs.readdirSync(DEMOS_PATH).map(name => path.resolve(DEMOS_PATH, `./${name}`));
 const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
 const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
-const reactComponentPathRegEx = /(\/react-docs\/pages\/components|\/react-docs\/pages\/layouts)\//;
+const reactComponentPathRegEx = /\/react-docs\/pages\/(components|layouts|apis)\//;
 const coreComponentPathRegEx = /(\/core\/patternfly\/components|\/core\/patternfly\/layouts)\//;
 
 exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {

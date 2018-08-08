@@ -4,6 +4,8 @@ import { css } from '@patternfly/react-styles';
 // import { AngleRightIcon, AngleDownIcon } from '@patternfly/react-icons';
 import AngleRightIcon from '@patternfly/react-icons/dist/js';
 import AngleDownIcon from '@patternfly/react-icons/dist/js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee, faSearch, faAngleRight, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import styles from './navigationItemGroup.styles';
 // {isExpanded ? '<AngleRightIcon />' : '<AngleDownIcon />'}
 
@@ -36,10 +38,12 @@ class NavigationItemGroup extends React.Component {
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              fontSize: '1.1rem',
+              fontWeight: 700
             }}
           >
-            {title}
+            {title} {isExpanded ? <FontAwesomeIcon icon={faAngleRight} size="1x" /> : <FontAwesomeIcon icon={faAngleDown} size="1x" />}
           </div>
         </button>
         <ul

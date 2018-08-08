@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const propTypes = {
   data: PropTypes.any.isRequired,
-  children: PropTypes.any.isRequired
+  children: PropTypes.any
 };
 
 const ComponentDocs = ({ data, children }) => (
