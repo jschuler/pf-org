@@ -4,7 +4,7 @@ import Navigation from '../components/navigation';
 import { toggleEnums } from '../components/navBar';
 import Prisim from 'prismjs'; // eslint-disable-line no-unused-vars
 
-import 'prismjs/themes/prism-coy.css';
+// import 'prismjs/themes/prism-coy.css';
 import '../../_repos/core/patternfly/patternfly-base.scss';
 import '../../sass/style.scss';
 import './main.scss';
@@ -81,9 +81,6 @@ export default class MainTemplate extends React.Component {
         title: 'Component Demos',
         children: allPages.react.component
       }, {
-        title: 'Component APIs',
-        children: allPages.react.page
-      }, {
         title: 'Layouts',
         children: allPages.react.layout
       }];
@@ -117,6 +114,13 @@ export default class MainTemplate extends React.Component {
   
 }
 
+// TODO: had to remove label field
+/*
+fields {
+  label
+  system
+}
+*/
 export const indexPageQuery = graphql`
   query GetSitesQuery {
     site {
@@ -131,7 +135,6 @@ export const indexPageQuery = graphql`
           layout
           componentPath
           fields {
-            label
             system
           }
           context {
@@ -151,7 +154,6 @@ export const indexPageQuery = graphql`
           layout
           componentPath
           fields {
-            label
             system
           }
           context {
@@ -173,7 +175,6 @@ export const indexPageQuery = graphql`
           component
           componentPath
           fields {
-            label
             system
           }
           context {
@@ -195,7 +196,6 @@ export const indexPageQuery = graphql`
           component
           componentPath
           fields {
-            label
             system
           }
           context {
@@ -217,7 +217,6 @@ export const indexPageQuery = graphql`
           component
           componentPath
           fields {
-            label
             system
           }
           context {

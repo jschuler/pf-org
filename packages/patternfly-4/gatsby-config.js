@@ -9,6 +9,7 @@ const plugins = [
   'gatsby-transformer-json',
   'gatsby-transformer-yaml',
   `svgo`,
+  'gatsby-plugin-preval',
   {
     resolve: `gatsby-plugin-postcss-sass`,
     options: {
@@ -77,27 +78,6 @@ const plugins = [
       directory: `${PROJECT_ROOT}/_repos/core/patternfly`
     }
   },
-  {
-    resolve: `gatsby-source-filesystem`,
-    options: {
-      name: `components`,
-      path: `${PROJECT_ROOT}/_repos/react/components`,
-    }
-  },
-  {
-    resolve: `gatsby-source-filesystem`,
-    options: {
-      name: `layouts`,
-      path: `${PROJECT_ROOT}/_repos/react/layouts`,
-    }
-  },
-  {
-    resolve: `gatsby-plugin-page-creator`,
-    options: {
-      path: `${PROJECT_ROOT}/_repos/react-docs/pages`,
-      name: 'pages'
-    }
-  },
   'gatsby-transformer-react-docgen',
   {
     resolve: `gatsby-transformer-remark`,
@@ -108,22 +88,11 @@ const plugins = [
     }
   },
   {
-    resolve: 'gatsby-plugin-transform-imports',
+    resolve: `gatsby-source-filesystem`,
     options: {
-      'react-bootstrap': {
-        transform: './angle-double-left-icon',
-        preventFullImport: true,
-      },
-      lodash: {
-        transform: 'lodash/${member}',
-        preventFullImport: true,
-      },
-      '@patternfly/react-icons': {
-        kebabCase: true,
-        preventFullImport: true,
-        transform: '@patternfly/react-icons/dist/js/icons/${member}'
-      }
-    },
+      name: `react-core`,
+      path: `${PROJECT_ROOT}/_repos/react-core/src`
+    }
   },
 ];
 

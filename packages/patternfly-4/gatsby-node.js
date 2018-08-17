@@ -2,11 +2,11 @@ const path = require('path');
 const fs = require('fs-extra');
 const inflection = require('inflection');
 const pascalCase = require('pascal-case');
+const paramCase = require('param-case');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
-const { createFilePath } = require('gatsby-source-filesystem');
 const Webpack = require('webpack');
 
 const COMPONENTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/components');
@@ -30,6 +30,7 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
   const UTILITIES_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/utilities');
   const isMarkdown = node.internal.type === 'MarkdownRemark';
   const isSitePage = node.internal.type === 'SitePage';
+  const isComponentMetadata = node.internal.type === 'ComponentMetadata';
 
   if (isSitePage) {
     if (reactComponentPathRegEx.test(node.componentPath)) {
@@ -61,6 +62,19 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
       });
     }
 
+  } else if (isComponentMetadata) {
+    // Add an extra field to graphql so we can name the sidebar item
+    createNodeField({
+      node,
+      name: 'label',
+      value: node.displayName
+    });
+    // Add field for first character so we can group by it
+    createNodeField({
+      node,
+      name: 'firstChar',
+      value: node.displayName.charAt(0)
+    });
   } else if (isMarkdown) {
     if (!node.fileAbsolutePath) {
       return;
@@ -112,7 +126,14 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
   const { createPage } = boundActionCreators;
 
   return graphql(`
-    {
+    fragment DocFile on File {
+      relativePath
+      absolutePath
+      base
+      name
+    }
+
+    query AllDocsFiles {
       allMarkdownRemark {
         edges {
           node {
@@ -124,13 +145,65 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
           }
         }
       }
+      docs: allFile(filter: { absolutePath: { glob: "**/*.docs.js" } }) {
+        edges {
+          node {
+            ...DocFile
+          }
+        }
+      }
+      examples: allFile(filter: { relativePath: { glob: "**/examples/!(*.styles).js" } }) {
+        edges {
+          node {
+            ...DocFile
+          }
+        }
+      }
     }
   `).then(result => {
     if (result.errors) {
       return Promise.reject(result.errors);
     }
 
-    return result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    // Pull in react-core docs
+    const docsComponentPath = path.resolve(__dirname, './src/components/componentDocs');
+    result.data.docs.edges.forEach(({ node: doc }) => {
+      const filePath = path.resolve(__dirname, '.tmp', doc.base);
+      const content = `
+      import React from 'react';
+      import docs from '${doc.absolutePath}';
+      import ComponentDocs from '${docsComponentPath}';
+
+      export default () => <ComponentDocs {...docs} />
+      `;
+      fs.outputFileSync(filePath, content);
+      boundActionCreators.createPage({
+        path: `/${path.dirname(doc.relativePath).toLowerCase()}`,
+        component: filePath
+      });
+    });
+    result.data.examples.edges.forEach(({ node: example }) => {
+      const examplePath = `/${path.dirname(example.relativePath).toLowerCase()}/${paramCase(example.name)}`;
+
+      boundActionCreators.createPage({
+        path: examplePath,
+        layout: 'example',
+        component: example.absolutePath
+      });
+    });
+
+    // result.data.allComponentMetadata.edges.forEach(({ node }) => {
+    //   createPage({
+    //     path: `api/${node.displayName}`,
+    //     component: path.resolve(`./src/templates/api.js`),
+    //     context: {
+    //       // Data passed to context is available in page queries as GraphQL variables.
+    //       name: node.displayName
+    //     }
+    //   });
+    // });
+
+    result.data.allMarkdownRemark.edges.forEach(({ node }) => {
       if (!node.fields) {
         var output = '';
         for (var property in node) {
@@ -310,4 +383,9 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
     ]
   });
   return config;
+};
+
+exports.modifyBabelrc = ({ stage, babelrc }) => {
+  babelrc.plugins.push(require.resolve('babel-plugin-react-docgen'));
+  return babelrc;
 };

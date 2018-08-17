@@ -1,7 +1,7 @@
 import React from 'react';
 import PrismCode from 'react-prism';
 
-import 'prismjs/themes/prism-coy.css';
+// import 'prismjs/themes/prism-coy.css';
 import './styles.scss';
 
 export default ({ children }) => {

@@ -5,7 +5,7 @@ import {
   global_spacer_xs as spacerXs,
   global_spacer_md as spacerMd,
   global_BackgroundColor_100 as navBackgroundColor,
-  l_page__sidebar_Width as sidebarWidth
+  l_page__sidebar_md_Width as sidebarWidth
 } from '@patternfly/react-tokens';
 
 export default StyleSheet.create({
@@ -13,9 +13,10 @@ export default StyleSheet.create({
     width: sidebarWidth.value
   },
   navigationContent: {
-    // position: 'fixed',
+    position: 'fixed',
     width: 'inherit',
-    // height: '100vh',
+    height: '100vh',
+    overflowY: 'auto',
     backgroundColor: navBackgroundColor.var
   },
   logo: {

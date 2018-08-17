@@ -4,7 +4,7 @@ import Link from 'gatsby-link';
 import Navigation from '@siteComponents/Navigation';
 import Prisim from 'prismjs'; // eslint-disable-line no-unused-vars
 
-import 'prismjs/themes/prism-coy.css';
+// import 'prismjs/themes/prism-coy.css';
 import '../../patternfly/patternfly-base.scss';
 import '../workspace.scss';
 

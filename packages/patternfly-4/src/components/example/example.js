@@ -6,27 +6,27 @@ import { Title } from '@patternfly/react-core';
 
 const propTypes = {
   children: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  className: PropTypes.string
 };
 
-const Example = ({ children, title, ...props }) => (
+const defaultProps = {
+  className: '',
+  description: ''
+};
+
+const Example = ({ children, title, className, description, ...props }) => (
   <div>
-    <Title size="lg" withMargins>
-      {title}
-    </Title>
-    <div className={css(styles.example)} {...props}>
-      {React.Children.map(
-        children,
-        child =>
-          React.isValidElement(child) &&
-          React.cloneElement(child, {
-            className: css(child.props && child.props.className, styles.spacing)
-          })
-      )}
+    <Title size="md">{title}</Title>
+    {Boolean(description) && <p className={css(styles.description)}>{description}</p>}
+    <div className={css(className, styles.example)} {...props}>
+      {children}
     </div>
   </div>
 );
 
 Example.propTypes = propTypes;
+Example.defaultProps = defaultProps;
 
 export default Example;

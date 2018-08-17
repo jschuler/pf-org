@@ -4,7 +4,7 @@ import PrismCode from 'react-prism';
 import pretty from 'pretty';
 import CodepenButton from '@siteComponents/CodepenButton';
 
-import 'prismjs/themes/prism-coy.css';
+// import 'prismjs/themes/prism-coy.css';
 import './styles.scss';
 
 export default ({ children }) => {
