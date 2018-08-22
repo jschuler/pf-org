@@ -34,10 +34,8 @@ function createCopyFunction(packageName, distModule, moduleType) {
   console.log(`distModule: ${distModule}`);
   console.log(`moduleType: ${moduleType}`);
   return filePath => {
-    console.log('hi');
     const from = path.join(distModule, filePath);
     const to = path.join(dest, moduleType, packageName, filePath);
-    console.log(`\ncopying from: ${from} to: ${to}`);
     fs.copySync(from, to);
   };
 }

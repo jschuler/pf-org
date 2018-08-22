@@ -36,7 +36,7 @@ yarn.lock
 
 #Build generated
 dist/
-
+_repos/
 
 ### SublimeText ###
 # cache files for sublime text

@@ -5,7 +5,6 @@ let stylesStr;
 if (process.env.NODE_ENV === `production`) {
   try {
     stylesStr = require(`!raw-loader!../public/styles.css`);
-    console.log('>>>>>>>>> required styles.css');
   } catch (e) {
     console.log(e);
   }

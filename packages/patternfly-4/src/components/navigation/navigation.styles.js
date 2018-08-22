@@ -13,9 +13,7 @@ export default StyleSheet.create({
     width: sidebarWidth.value
   },
   navigationContent: {
-    position: 'fixed',
     width: 'inherit',
-    height: '100vh',
     overflowY: 'auto',
     backgroundColor: navBackgroundColor.var
   },

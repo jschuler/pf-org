@@ -24,7 +24,7 @@ const DocsPage = () => (
   <div>
     <div className={css(styles.hero)}>
       <Content>
-        <Title size="4xl" withMargins className={css(styles.heroText)}>
+        <Title size="4xl" className={css(styles.heroText)}>
           PatternFly 4 Documentation
         </Title>
         <Title size="md" className={css(styles.heroText)}>

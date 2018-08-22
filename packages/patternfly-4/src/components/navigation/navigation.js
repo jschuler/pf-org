@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import logo from '../../assets/logo.png';
 import NavigationItemGroup from './navigationItemGroup';
 import NavigationItem from './navigationItem';
+import ValueToggle from '../valueToggle';
 
 const routeShape = PropTypes.shape({
   to: PropTypes.string.isRequired,
@@ -13,11 +14,13 @@ const routeShape = PropTypes.shape({
 });
 
 const propTypes = {
+  routes: PropTypes.array,
   componentRoutes: PropTypes.arrayOf(routeShape),
   layoutRoutes: PropTypes.arrayOf(routeShape)
 };
 
 const defaultProps = {
+  routes: [],
   componentRoutes: [],
   layoutRoutes: []
 };
@@ -37,13 +40,66 @@ class Navigation extends React.Component {
   };
 
   render() {
-    const { componentRoutes, layoutRoutes } = this.props;
+    const { routes, componentRoutes, layoutRoutes } = this.props;
     const { searchValue } = this.state;
     const searchRE = new RegExp(searchValue, 'i');
 
     const filteredComponentRoutes = componentRoutes.filter(c => searchRE.test(c.label));
 
     const filteredLayoutRoutes = layoutRoutes.filter(c => searchRE.test(c.label));
+
+    // Start Edit
+    const allRoutes = routes.map((routeParent, index) => {
+      const { title, children } = routeParent;
+      const routeChildren = children.map((route, index) => (
+        <NavigationItem to={route.to} key={route.to}>
+          {route.label}
+        </NavigationItem>
+      ));
+      return (
+        <ValueToggle key={title}>
+          {({ value, toggle }) => (
+          <NavigationItemGroup 
+            title={title}
+            isExpanded={value}
+            onToggleExpand={toggle}
+          >
+            {routeChildren}
+          </NavigationItemGroup>
+          )}
+        </ValueToggle>
+      );
+    });
+    return (
+      <div className={css(styles.navigation)}>
+        <div className={css(styles.navigationContent)}>
+          {/* <div className={css(styles.search)}>
+            <input
+              className={css(styles.input)}
+              placeholder="Find components, templates,..."
+              type="text"
+              value={searchValue}
+              onChange={this.handleSearchChange}
+            />
+          </div> */}
+          {allRoutes}
+          <ValueToggle>
+            {({ value, toggle }) => (
+            <NavigationItemGroup 
+              title="Developer API"
+              isExpanded={value}
+              onToggleExpand={toggle}
+            >
+              <NavigationItem to="/docs/apis/">
+                React API
+              </NavigationItem>
+            </NavigationItemGroup>
+            )}
+          </ValueToggle>
+        </div>
+      </div>
+    );
+    // End Edit
 
     return (
       <div className={css(styles.navigation)}>

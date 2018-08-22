@@ -79,13 +79,12 @@ const _createPage = (filePath, pagesDirectory, createPage) => {
   }
 
   // took out 'demos' as it is displayed separately on Protoype page for now
-  const reactComponentPathRegEx = /\/react-docs\/pages\/(components|layouts|apis)\//;
   const coreComponentPathRegEx = /\/core\/patternfly\/(components|layouts|utilities)\//;
 
   const prefixThis = ['/components/', '/layouts/', '/demos/', '/styles/', '/utilities/'];
   let path = createPath(pagesDirectory, filePath);
-  if (reactComponentPathRegEx.test(filePath) || coreComponentPathRegEx.test(filePath)) {
-    path = `/docs${path}`;
+  if (coreComponentPathRegEx.test(filePath)) {
+    path = `/docs/core${path}`;
   }
   // console.log(`\n\npagesDirectory: ${pagesDirectory}\nfilePath ${filePath}`);
 

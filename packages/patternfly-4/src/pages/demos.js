@@ -7,44 +7,47 @@ import './_pages.scss';
 
 export default ({ data, location, children }) => {
 
-  const allPages = data.allSitePage.edges.reduce((accum, edge) => {
-    const type = edge.node.context.type || 'page';
-
-    if (!accum[type]) {
-      accum[type] = [];
+  const demoRoutes = data.allSitePage.edges.map((edge) => (
+    edge = {
+      label: edge.node.fields.label,
+      to: edge.node.path
     }
+  ));
 
-    if (edge.node.context.name == null) {
-      let bestGuessName = edge.node.path.match(/\/([A-Za-z0-9_-]+)$/g)[0].substring(1);
-      bestGuessName = bestGuessName.replace(/-/g, ' ');
+  // const allPages = data.allSitePage.edges.reduce((accum, edge) => {
+  //   const type = edge.node.context.type || 'page';
 
-      if (bestGuessName !== 'docs') {
-        edge.node.context.name = bestGuessName;
-      }
-    }
+  //   if (!accum[type]) {
+  //     accum[type] = [];
+  //   }
 
-    accum[type].push({
-      path: edge.node.path,
-      text: edge.node.context.name,
-      className: `is-${type}`
-    });
-    return accum;
-  }, {});
+  //   if (edge.node.context.name == null) {
+  //     let bestGuessName = edge.node.path.match(/\/([A-Za-z0-9_-]+)$/g)[0].substring(1);
+  //     bestGuessName = bestGuessName.replace(/-/g, ' ');
+
+  //     if (bestGuessName !== 'docs') {
+  //       edge.node.context.name = bestGuessName;
+  //     }
+  //   }
+
+  //   accum[type].push({
+  //     path: edge.node.path,
+  //     text: edge.node.context.name,
+  //     className: `is-${type}`
+  //   });
+  //   return accum;
+  // }, {});
 
   let cards;
-  if (allPages.demo) {
-    cards = allPages.demo.map((card) => {
-      const { path, text, className } = card;
-      const isFullPage = path.endsWith('-full/');
-      if (isFullPage) {
-        return null;
-      }
+  if (demoRoutes) {
+    cards = demoRoutes.map((card) => {
+      const { to, label } = card;
       return (
-        <Link className="nav-link" activeClassName="nav-active" to={`${path}`} key={`navigation-${path}`}>
+        <Link className="nav-link" activeClassName="nav-active" to={`${to}`} key={`navigation-${to}`}>
           <Card>
             <CardImg top width="100%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" alt="Card image cap" />
             <CardBody>
-              <CardTitle>{text}</CardTitle>
+              <CardTitle>{label}</CardTitle>
             </CardBody>
           </Card>
         </Link>
@@ -73,16 +76,15 @@ export default ({ data, location, children }) => {
 
 export const demosPageQuery = graphql`
   query GetDemosQuery {
-    allSitePage(filter: { path: { regex: "/^((?!(404)).)*$/" } }) {
+    allSitePage(filter: { path: { regex: "/^\/demos\/([A-Za-z0-9_-]+)/" } }) {
       edges {
         node {
           path
-          context {
-            type
-            category
-            slug
-            name
-            title
+          layout
+          componentPath
+          fields {
+            system
+            label
           }
         }
       }

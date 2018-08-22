@@ -1,13 +1,9 @@
 const path = require('path');
 const fs = require('fs-extra');
-const inflection = require('inflection');
 const pascalCase = require('pascal-case');
 const paramCase = require('param-case');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
-const glob = require('util').promisify(require('glob'));
 const resolveAliases = require('./build/resolveAliases');
-const Webpack = require('webpack');
 
 const COMPONENTS_PATH = path.resolve(__dirname, './_repos/core/patternfly/components');
 const DEMOS_PATH = path.resolve(__dirname, './_repos/core/patternfly/demos');
@@ -18,49 +14,62 @@ const COMPONENT_PATHS = fs.readdirSync(COMPONENTS_PATH).map(name => path.resolve
 const DEMO_PATH = fs.readdirSync(DEMOS_PATH).map(name => path.resolve(DEMOS_PATH, `./${name}`));
 const LAYOUT_PATHS = fs.readdirSync(LAYOUTS_PATH).map(name => path.resolve(LAYOUTS_PATH, `./${name}`));
 const UTILITIES_PATHS = fs.readdirSync(UTILITIES_PATH).map(name => path.resolve(UTILITIES_PATH, `./${name}`));
-const reactComponentPathRegEx = /\/react-docs\/pages\/(components|layouts|apis)\//;
-const coreComponentPathRegEx = /(\/core\/patternfly\/components|\/core\/patternfly\/layouts)\//;
+const reactComponentPathRegEx = /\/react-core(\/src\/components|\/src\/layouts|\/src\/apis|\/_docs)\//;
+const coreComponentPathRegEx = /\/core\/patternfly\/(components|layouts|utilities)\//;
+const coreDemoPathRegEx = /\/core\/patternfly\/demos\//;
+const pagesComponentPathRegEx = /\/pages\//;
 
 exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
   const { createNodeField } = boundActionCreators;
-  const PAGES_BASE_DIR = path.resolve(__dirname, './_repos/core/site/pages');
-  const COMPONENTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/components');
-  const DEMOS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/demos');
-  const LAYOUTS_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/layouts');
-  const UTILITIES_BASE_DIR = path.resolve(__dirname, './_repos/core/patternfly/utilities');
-  const isMarkdown = node.internal.type === 'MarkdownRemark';
   const isSitePage = node.internal.type === 'SitePage';
   const isComponentMetadata = node.internal.type === 'ComponentMetadata';
 
   if (isSitePage) {
+    let pathLabel;
     if (reactComponentPathRegEx.test(node.componentPath)) {
-      const pathLabel = node.path
+      pathLabel = node.path
         .split('/')
         .filter(Boolean)
         .pop();
-      createNodeField({
-        node,
-        name: 'label',
-        value: pascalCase(pathLabel)
-      });
       createNodeField({
         node,
         name: 'system',
         value: 'react'
       });
     } else if (coreComponentPathRegEx.test(node.componentPath)) {
+      pathLabel = node.path
+        .split('/')[4];
       createNodeField({
         node,
         name: 'system',
         value: 'core'
       });
+    } else if (coreDemoPathRegEx.test(node.componentPath)) {
+      pathLabel = node.path
+        .split('/')[2];
+      createNodeField({
+        node,
+        name: 'system',
+        value: 'core'
+      });
+    } else if (pagesComponentPathRegEx.test(node.componentPath)) {
+      createNodeField({
+        node,
+        name: 'system',
+        value: 'page'
+      });
     } else {
       createNodeField({
         node,
         name: 'system',
-        value: 'something_else'
+        value: 'other'
       });
     }
+    createNodeField({
+      node,
+      name: 'label',
+      value: pascalCase(pathLabel)
+    });
 
   } else if (isComponentMetadata) {
     // Add an extra field to graphql so we can name the sidebar item
@@ -75,50 +84,6 @@ exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
       name: 'firstChar',
       value: node.displayName.charAt(0)
     });
-  } else if (isMarkdown) {
-    if (!node.fileAbsolutePath) {
-      return;
-    }
-    if (node.fileAbsolutePath.includes('react')) {
-      console.log(`REACT COMPONENT`);
-    }
-    const isPage = node.fileAbsolutePath.includes(PAGES_BASE_DIR);
-    const isComponent = node.fileAbsolutePath.includes(COMPONENTS_BASE_DIR);
-    const isLayout = node.fileAbsolutePath.includes(LAYOUTS_BASE_DIR);
-    const isDemo = node.fileAbsolutePath.includes(DEMOS_BASE_DIR);
-    const isUtility = node.fileAbsolutePath.includes(UTILITIES_BASE_DIR);
-    if (isPage) {
-      const relativePath = path.relative(PAGES_BASE_DIR, node.fileAbsolutePath);
-      const pagePath = `/${relativePath}`.replace(/\.md$/, '');
-      console.log(`isPage: ${pagePath}`);
-      createNodeField({ node, name: 'path', value: pagePath });
-      createNodeField({ node, name: 'type', value: 'page' });
-      createNodeField({ node, name: 'contentType', value: 'page' });
-    } else if (isComponent) {
-      const componentName = path.basename(path.dirname(node.fileAbsolutePath));
-      const pagePath = `/components/${componentName}/docs`;
-      createNodeField({ node, name: 'path', value: pagePath });
-      createNodeField({ node, name: 'type', value: 'documentation' });
-      createNodeField({ node, name: 'contentType', value: 'component' });
-    } else if (isLayout) {
-      const layoutName = path.basename(path.dirname(node.fileAbsolutePath));
-      const pagePath = `/layouts/${layoutName}/docs`;
-      createNodeField({ node, name: 'path', value: pagePath });
-      createNodeField({ node, name: 'type', value: 'documentation' });
-      createNodeField({ node, name: 'contentType', value: 'layout' });
-    } else if (isDemo) {
-      const demoName = path.basename(path.dirname(node.fileAbsolutePath));
-      const pagePath = `/demos/${demoName}/docs`;
-      createNodeField({ node, name: 'path', value: pagePath });
-      createNodeField({ node, name: 'type', value: 'documentation' });
-      createNodeField({ node, name: 'contentType', value: 'demo' });
-    } else if (isUtility) {
-      const utilityName = path.basename(path.dirname(node.fileAbsolutePath));
-      const pagePath = `/utilities/${utilityName}/docs`;
-      createNodeField({ node, name: 'path', value: pagePath });
-      createNodeField({ node, name: 'type', value: 'documentation' });
-      createNodeField({ node, name: 'contentType', value: 'utility' });
-    }
   }
 };
 
@@ -128,34 +93,45 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
   return graphql(`
     fragment DocFile on File {
       relativePath
+      relativeDirectory
       absolutePath
       base
       name
     }
-
     query AllDocsFiles {
-      allMarkdownRemark {
+      reactDocs: allFile(filter: { absolutePath: { glob: "**/*.docs.js" } }) {
+        edges {
+          node {
+            ...DocFile
+          }
+        }
+      }
+      reactExamples: allFile(filter: { absolutePath: { glob: "**/react-core/**/examples/!(*.styles).js" } }) {
+        edges {
+          node {
+            ...DocFile
+          }
+        }
+      }
+      reactApi: allComponentMetadata(
+        sort: {fields:[displayName], order: ASC}
+        filter: {displayName: {ne: "index"}}
+      ) {
         edges {
           node {
             fields {
-              type
-              path
-              contentType
+              label
             }
-          }
-        }
-      }
-      docs: allFile(filter: { absolutePath: { glob: "**/*.docs.js" } }) {
-        edges {
-          node {
-            ...DocFile
-          }
-        }
-      }
-      examples: allFile(filter: { relativePath: { glob: "**/examples/!(*.styles).js" } }) {
-        edges {
-          node {
-            ...DocFile
+            displayName
+            description
+            props {
+              name
+              type {
+                value
+                raw
+              }
+              required
+            }
           }
         }
       }
@@ -167,95 +143,51 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
 
     // Pull in react-core docs
     const docsComponentPath = path.resolve(__dirname, './src/components/componentDocs');
-    result.data.docs.edges.forEach(({ node: doc }) => {
-      const filePath = path.resolve(__dirname, '.tmp', doc.base);
+    result.data.reactDocs.edges.forEach(({ node: doc }) => {
+      const filePath = path.resolve(__dirname, '_repos/react-core/_docs', doc.base);
+
+      let rawExamples = [];
+      result.data.reactExamples.edges.forEach(({ node: example }) => {
+        if (example.relativeDirectory.split('/').slice(0, 2).join('/') === doc.relativeDirectory) {
+          // e.g. components/Alert/examples/DangerAlert.js
+          let path = `../src/${example.relativePath}`;
+          rawExamples.push(`{name: '${example.name}', path: '${path}', file: require('!!raw!${path}')}`);
+        }
+      });
+
       const content = `
       import React from 'react';
       import docs from '${doc.absolutePath}';
       import ComponentDocs from '${docsComponentPath}';
-
-      export default () => <ComponentDocs {...docs} />
+      const relativePath = '${doc.relativePath}';
+      const rawExamples = [${rawExamples}];
+      export default () => <ComponentDocs rawExamples={rawExamples} {...docs} />
       `;
       fs.outputFileSync(filePath, content);
       boundActionCreators.createPage({
-        path: `/${path.dirname(doc.relativePath).toLowerCase()}`,
+        path: `/docs/react/${path.dirname(doc.relativePath).toLowerCase()}`,
+        layout: 'docs',
         component: filePath
       });
     });
-    result.data.examples.edges.forEach(({ node: example }) => {
-      const examplePath = `/${path.dirname(example.relativePath).toLowerCase()}/${paramCase(example.name)}`;
+    result.data.reactExamples.edges.forEach(({ node: example }) => {
+      const examplePath = `/docs/react/${path.dirname(example.relativePath).toLowerCase()}/${paramCase(example.name)}`;
 
       boundActionCreators.createPage({
         path: examplePath,
-        layout: 'example',
         component: example.absolutePath
       });
     });
-
-    // result.data.allComponentMetadata.edges.forEach(({ node }) => {
-    //   createPage({
-    //     path: `api/${node.displayName}`,
-    //     component: path.resolve(`./src/templates/api.js`),
-    //     context: {
-    //       // Data passed to context is available in page queries as GraphQL variables.
-    //       name: node.displayName
-    //     }
-    //   });
-    // });
-
-    result.data.allMarkdownRemark.edges.forEach(({ node }) => {
-      if (!node.fields) {
-        var output = '';
-        for (var property in node) {
-          output += property + ': ' + node[property]+';\n';
-        }
-        // console.log(`\nAGAIN : in here cause ${output}`);
-        return;
-      }
-
-      // console.log(`creating page at ${node.fields.path}`);
+    // Generate API pages for React
+    result.data.reactApi.edges.forEach(({ node }) => {
       createPage({
-        path: node.fields.path,
-        component: path.resolve(__dirname, `./_repos/core/site/templates/${node.fields.type}.js`),
-        layout: 'main',
+        path: `docs/api/${node.displayName}`,
+        layout: 'docs',
+        component: path.resolve(`./src/templates/api.js`),
         context: {
-          pagePath: node.fields.path,
-          type: node.fields.type,
-          contentType: node.fields.contentType
+          // Data passed to context is available in page queries as GraphQL variables.
+          name: node.displayName
         }
-      });
-    });
-  });
-};
-
-exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, deleteLayout } }) => {
-  // glob(path.resolve(__dirname, '_repos/react-docs/layouts/**.js')).then(matches => {
-  //   matches.forEach(layoutFilePath => {
-  //     const id = path.parse(layoutFilePath).name;
-  //     deleteLayout(id);
-  //     createLayout({
-  //       id,
-  //       component: layoutFilePath
-  //     });
-  //   });
-  // });
-  glob(path.resolve(__dirname, '_repos/core/site/layouts/**.js')).then(matches => {
-    matches.forEach(layoutFilePath => {
-      const id = path.parse(layoutFilePath).name;
-      deleteLayout(id);
-      createLayout({
-        id,
-        component: layoutFilePath
-      });
-    });
-  });
-  glob(path.resolve(__dirname, 'src/layouts/**.js')).then(matches => {
-    matches.forEach(layoutFilePath => {
-      const id = path.parse(layoutFilePath).name;
-      deleteLayout(id);
-      createLayout({
-        id,
-        component: layoutFilePath
       });
     });
   });
@@ -263,53 +195,32 @@ exports.createLayouts = ({ graphql, store, boundActionCreators: { createLayout, 
 
 exports.onCreatePage = async ({ page, boundActionCreators }) => {
   const { createPage } = boundActionCreators;
-  const CATEGORY_PAGE_REGEX = /^\/docs\/(components|layouts|demos|utilities)\/$/;
-  const CATEGORY_CHILD_PAGE_REGEX = /^\/docs\/(components|layouts|demos|utilities)\/([A-Za-z0-9_-]+)/;
+  const CATEGORY_PAGE_REGEX = /^\/docs\/core\/(components|layouts|demos|utilities)\/$/;
+  const CATEGORY_CHILD_PAGE_REGEX = /^\/docs\/core\/(components|layouts|demos|utilities)\/([A-Za-z0-9_-]+)/;
   const DEMO_PAGE_REGEX = /^\/demos\/([A-Za-z0-9_-]+)/;
   const GETTING_STARTED_PAGE_REGEX = /\/src\/pages\/getting-started\//;
+  const DOCS_PAGE = /\/docs\//;
   return new Promise((resolve, reject) => {
-    const isCategoryPage = page.path.match(CATEGORY_PAGE_REGEX);
     const isCategoryChildPage = page.path.match(CATEGORY_CHILD_PAGE_REGEX);
     const isGettingStartedPage = page.componentPath.match(GETTING_STARTED_PAGE_REGEX);
     const isDemoPage = page.path.match(DEMO_PAGE_REGEX);
+    const isDocsPage = page.path.match(DOCS_PAGE);
 
     page.context.type = 'page';
     page.context.category = 'page';
     page.context.slug = '';
     page.context.name = '';
     page.context.title = '';
-    page.layout = 'main';
-
-    // console.log(`page.path: ${page.path} and therefore isCategoryChildPage: ${isCategoryChildPage}`);
+    page.layout = 'index';
 
     if (isGettingStartedPage) {
       page.layout = 'getting-started';
-    } else if (isCategoryPage) {
-      page.context.type = 'category';
-      page.context.category = page.path.match(CATEGORY_PAGE_REGEX)[1];
+      createPage(page);
     } else if (isDemoPage) {
-      // console.log(page.path);
-      const pageSlug = page.path.match(DEMO_PAGE_REGEX)[1];
-      const pageName = pageSlug.replace('-', ' ');
-      const pageTitle = inflection.titleize(pageName);
-      page.context.type = 'demo';
-      page.context.category = 'demo';
-      page.context.slug = pageSlug;
-      page.context.name = pageName;
-      page.context.title = pageTitle;
-      page.path = `${page.path}`;
+      createPage(page);
     } else if (isCategoryChildPage) {
-      // console.log(page.path);
-      const pageCategory = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[1];
-      const pageSlug = page.path.match(CATEGORY_CHILD_PAGE_REGEX)[2];
-      const pageName = pageSlug.replace('-', ' ');
-      const pageTitle = inflection.titleize(pageName);
-      page.context.type = inflection.singularize(pageCategory);
-      page.context.category = pageCategory;
-      page.context.slug = pageSlug;
-      page.context.name = pageName;
-      page.context.title = pageTitle;
-      page.path = `${page.path}`;
+      page.layout = 'docs';
+      createPage(page);
 
       // create full demo page for each component
       const demoPage = Object.assign({}, page);
@@ -317,8 +228,9 @@ exports.onCreatePage = async ({ page, boundActionCreators }) => {
       const nodePath = demoPage.path;
       demoPage.path = `${nodePath.substr(0, nodePath.length - 1)}-full/`;
       createPage(demoPage);
+    } else if (isDocsPage) {
+      page.layout = 'docs';
     }
-    createPage(page);
 
     resolve();
   });

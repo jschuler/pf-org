@@ -8,7 +8,6 @@ const plugins = [
   'gatsby-transformer-sharp',
   'gatsby-transformer-json',
   'gatsby-transformer-yaml',
-  `svgo`,
   'gatsby-plugin-preval',
   {
     resolve: `gatsby-plugin-postcss-sass`,
@@ -24,13 +23,6 @@ const plugins = [
     }
   },
   {
-    resolve: `gatsby-plugin-page-creator`,
-    options: {
-      path: `${PROJECT_ROOT}/_repos/core/site/pages`,
-      name: 'pages'
-    }
-  },
-  {
     resolve: 'gatsby-source-filesystem',
     options: {
       path: `${PROJECT_ROOT}/_repos/core/patternfly`,
@@ -40,38 +32,10 @@ const plugins = [
   {
     resolve: 'gatsby-source-filesystem',
     options: {
-      path: `${PROJECT_ROOT}/_repos/core/site/pages`,
-      name: 'pages'
-    }
-  },
-  {
-    resolve: 'gatsby-source-filesystem',
-    options: {
-      path: `${PROJECT_ROOT}/_repos/core/site/_site`,
-      name: 'site-components'
-    }
-  },
-  {
-    resolve: 'gatsby-source-filesystem',
-    options: {
       path: `${PROJECT_ROOT}/_repos/core/site/img`,
       name: 'images'
     }
   },
-  // {
-  //   resolve: 'gatsby-transformer-remark',
-  //   options: {
-  //     plugins: [
-  //       `gatsby-remark-autolink-headers`,
-  //       {
-  //         resolve: `gatsby-remark-prismjs`,
-  //         options: {
-  //           classPrefix: 'prism-language-'
-  //         }
-  //       }
-  //     ]
-  //   }
-  // },
   {
     resolve: 'gatsby-remark-embed-snippet',
     options: {
@@ -103,28 +67,3 @@ module.exports = {
   pathPrefix: '/pf-org/4.0',
   plugins
 };
-
-/*
-  {
-    resolve: `gatsby-source-filesystem`,
-    options: {
-      name: `examples`,
-      path: `${PROJECT_ROOT}/_repos/react-docs/components/examples`
-    }
-  },
-  'gatsby-transformer-react-docgen'
-  {
-    resolve: 'gatsby-transformer-remark',
-    options: {
-      plugins: [
-        `gatsby-remark-autolink-headers`,
-        {
-          resolve: `gatsby-remark-prismjs`,
-          options: {
-            classPrefix: 'prism-language-'
-          }
-        }
-      ]
-    }
-  },
-*/
