@@ -10,6 +10,8 @@ exports.replaceRenderer = ({
   const { html, styleTags, renderedClassNames } = renderStatic(
     () => {
       try {
+        // console.log('\n');
+        // console.log(bodyComponent);
         renderToString(bodyComponent);
       } catch (err) {
         console.log(err);

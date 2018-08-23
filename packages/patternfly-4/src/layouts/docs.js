@@ -2,7 +2,7 @@ import React from 'react';
 import Page from '../components/page';
 import Navigation from '../components/navigation';
 import { toggleEnums } from '../components/topNav';
-// import 'prismjs';
+import 'prismjs';
 // import '../../_repos/core/patternfly/patternfly-base.scss';
 import './docs.scss';
 // import './workspace.scss';

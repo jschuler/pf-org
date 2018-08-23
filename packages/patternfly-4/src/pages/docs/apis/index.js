@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Link from 'gatsby-link';
 import { Title, Badge } from '@patternfly/react-core';
-import { css } from '@patternfly/react-styles';
-import styles from './apis.styles';
+// import { css } from '@patternfly/react-styles';
+// import styles from './apis.styles';
 
 const propTypes = {
   data: PropTypes.any.isRequired
@@ -13,7 +13,11 @@ const ApiDocsIndex = ({ data }) => {
   const groups = data.allComponentMetadata.group;
 
   return (
-    <div className={css(styles.apiContent)}>
+    <div
+      style={{
+        padding: '2rem'
+      }}
+    >
       <Title size="4xl">
         React API
       </Title>
@@ -26,7 +30,10 @@ const ApiDocsIndex = ({ data }) => {
             {group.edges.map(edge => (
               <Link
                 to={`/docs/api/${edge.node.displayName}`}
-                className={css(styles.apiItem)}
+                style={{
+                  display: 'block',
+                  padding: '0.25rem'
+                }}
                 key={`/docs/api/${edge.node.displayName}`}
               >
                 <Badge>{edge.node.displayName}</Badge>
